@@ -20,6 +20,9 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 
   gem 'zurb-foundation', '~> 4.0.0'
+  gem 'ember-rails'
+  gem 'ember-source', '1.0.0.rc4' # or the version you need
+  gem 'handlebars-source', '1.0.0.rc4' # or the version you need
 end
 
 gem 'jquery-rails'
