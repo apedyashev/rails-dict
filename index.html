@@ -9,6 +9,10 @@
 <body>
 
   <script type="text/x-handlebars">
+    <div class="toolbar">{{outlet toolbar}}</div>
+    <div class="sidebar">sidebar:<br/> {{outlet sidebar}}</div>
+    <div class="content">content:{{outlet content}}</div>
+
     <h2>Welcome to Ember.js, {{firstName}} {{lastName}}</h2>
     
     Array looping:<br/>
@@ -23,7 +27,6 @@
     {{else}}
       sorry no watches found
     {{/each}}
-    {{outlet}}
     
     Binding attr: <img {{bindAttr src="avatar"}} width="100px"/>
     <hr/>
@@ -42,7 +45,17 @@
     
     <hr/>
     <h5>Links</h5>
+      <a href="javascript:void(0);">{{#linkTo home}}Go Home{{/linkTo}}</a>
+      <a href="javascript:void(0);">{{#linkTo sidebar}}Update sidebar{{/linkTo}}</a>
+      <a href="javascript:void(0);">{{#linkTo about}}About{{/linkTo}}</a>
     
+    <hr/>
+    {{#if isExpanded}}
+      <div class='body'>Expanded</div>
+      <button {{action contract}}>Contract</button>
+    {{else}}
+      <button {{action expand}}>Show More...</button>
+    {{/if}}
     
   </script>
 
@@ -54,6 +67,23 @@
     </ul>
   </script>
 
+  <script type="text/x-handlebars" data-template-name="home">
+    home template: {{title}}
+  </script>
+  
+  <script type="text/x-handlebars" data-template-name="about">
+    about template:{{title}}
+  </script>
+  
+  <script type="text/x-handlebars" data-template-name="sidebar">
+    sidebar template:
+    <ul>
+      {{#each items}}
+        <li>{{title}}</li>
+      {{/each}}
+    </ul>
+  </script>
+  
   <script src="assets/js/libs/jquery-1.9.1.js"></script>
   <script src="assets/js/libs/handlebars-1.0.0-rc.3.js"></script>
   <script src="assets/js/libs/ember-1.0.0-rc.3.js"></script>

@@ -19,20 +19,85 @@ DictApp.ApplicationController = Ember.Controller.extend
     brand: 'Rolex'
     model: 'Sky-Dweller'
   ]
+  
+  isExpanded: false
 
+  expand: ->
+    @set('isExpanded', true)
+
+  contract: ->
+    @set('isExpanded', false)
+
+
+DictApp.Router = Ember.Router.extend
+    enableLogging: true,
+    location: 'hash'
+    
 DictApp.Router.map ->
   # put your routes here
-  @resource "photos", ->
-    @resource "photo", { path: "/:photo_id" }, ->
-      this.route "comments"
-      this.route "comment", { path: "/comments/:comment_id" }
+  @route 'home'
+  @route 'about'
+  @route 'sidebar'
+#  @resource "photos", ->
+#    @route "edit", { path: "/:photo_id" }
+
+#DictApp.Router.reopen
+#  location: 'history'
+
 
 DictApp.IndexRoute = Ember.Route.extend
   model: ->
     return ['red', 'yellow', 'blue'];
     
+#HOME
+DictApp.HomeRoute = Ember.Route.extend
+  #If you don't explicitly define an App.IndexController, Ember.js will automatically generate one for you.
+  setupController: (controller)->
+    controller.set 'title', 'Home'
     
-1
+  renderTemplate: ->
+    @render 
+      outlet: 'content'
+      
+DictApp.HomeView = Ember.View.extend
+   templateName: 'home'
+    
+    
+#ABOUT
+DictApp.AboutRoute = Ember.Route.extend
+  #If you don't explicitly define an App.IndexController, Ember.js will automatically generate one for you.
+  setupController: (controller)->
+    controller.set 'title', 'About'
+    
+  renderTemplate: ->
+    @render 
+      outlet: 'content'
+      
+DictApp.AboutView = Ember.View.extend
+   templateName: 'about'
+   
+   
+#SIDEBAR
+DictApp.SidebarRoute = Ember.Route.extend
+  #If you don't explicitly define an App.IndexController, Ember.js will automatically generate one for you.
+  setupController: (controller)->
+    now = new Date
+    controller.set 'items', [
+      title: "item1#{now.getTime()}"
+    ,
+      title: "item2#{now.getTime()}"
+    ,
+      title: "item3#{now.getTime()}"
+    ]
+    
+  renderTemplate: ->
+    @render 
+      outlet: 'sidebar'
+      
+DictApp.SidebarView = Ember.View.extend
+   templateName: 'sidebar'
+   
+   
 ###
 $ ->
   window.App = Ember.Application.create
