@@ -9,9 +9,41 @@
 <body>
 
   <script type="text/x-handlebars">
-    <h2>Welcome to Ember.js</h2>
-
+    <h2>Welcome to Ember.js, {{firstName}} {{lastName}}</h2>
+    
+    Array looping:<br/>
+    {{# each arrayEl in someArray}}
+    <strong>{{arrayEl}};</strong>
+    {{/each}}
+    
+    <br/>
+    Array of objects:<br/>
+    {{#each watches}}
+     {{brand}} {{model}}<br/>
+    {{else}}
+      sorry no watches found
+    {{/each}}
     {{outlet}}
+    
+    Binding attr: <img {{bindAttr src="avatar"}} width="100px"/>
+    <hr/>
+    Binding class names: 
+    <span {{bindAttr class="priorityCls"}}>Priority</span>
+    <br>Binding class to Boolean Values:
+    <span {{bindAttr class="isCompleted"}}>completed?</span>
+    <br>Binding class to more than one prop:
+    <span {{bindAttr class="isCompleted priorityCls"}}>Priority & is completed?</span>
+    <br>Binding custom class to Boolean Values:
+    <span {{bindAttr class="isCompleted:completed:not-complited"}}>completed?</span>
+    <br>add a class if a property is false
+    <span {{bindAttr class="isEnabled::disabled"}}>enabled?</span>
+    <br>static classes
+    <span {{bindAttr class=":label :round priorityCls"}}>some label</span>
+    
+    <hr/>
+    <h5>Links</h5>
+    
+    
   </script>
 
   <script type="text/x-handlebars" data-template-name="index">
@@ -25,7 +57,7 @@
   <script src="assets/js/libs/jquery-1.9.1.js"></script>
   <script src="assets/js/libs/handlebars-1.0.0-rc.3.js"></script>
   <script src="assets/js/libs/ember-1.0.0-rc.3.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/dict.js"></script>
 
 </body>
 </html>
