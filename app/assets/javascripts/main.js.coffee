@@ -1,3 +1,4 @@
+###
 DictApp = Ember.Application.create
   LOG_TRANSITIONS: true
   ready: ->
@@ -97,6 +98,7 @@ DictApp.SidebarRoute = Ember.Route.extend
 DictApp.SidebarView = Ember.View.extend
    templateName: 'sidebar'
 
+###
 
 ###
 $ ->

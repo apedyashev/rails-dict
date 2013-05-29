@@ -1,2 +1,90 @@
-<h1>Main#index</h1>
-<p>Find me in app/views/main/index.html.erb</p>
+<script type="text/x-handlebars">
+<div class="row">
+    {{partial "mainmenu"}}
+</div>
+
+<div class="row">
+  {{outlet main}}
+</div>
+
+</script>
+
+<script type="text/x-handlebars" data-template-name="_mainmenu">
+  <dl class="sub-nav pull-right">
+    {{#linkTo dicts tagName="dd"}}<a href="javascript;">Dictionaries</a>{{/linkTo}}
+    {{#linkTo connections tagName="dd"}}<a href="javascript;">Connections</a>{{/linkTo}}
+  </dl>
+</script>
+
+<script type="text/x-handlebars" data-template-name="dictionaries">
+  <div class="small-2 large-4 columns">
+    <div class="button-bar">
+      <ul class="button-group">
+        <li><a href="#" class="small button disabled">Dictionaries</a></li>
+        <li><a href="#" class="small button">Collaborators</a></li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      panel
+    </div>
+
+
+  </div>
+
+
+  <div class="small-6 large-8 columns">
+    <table width="100%">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Russian</th>
+        <th>Serbian</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>1</td>
+        <td>окно</td>
+        <td>прозор</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>дождь</td>
+        <td>киша</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>берег</td>
+        <td>обала</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</script>
+
+
+
+<script type="text/x-handlebars" data-template-name="connections">
+    <div class="row">
+      <div class="small-2 large-2 columns">
+        avatar
+      </div>
+      <div class="small-10 large-10 columns">
+        info
+      </div>
+    </div>
+
+  <div class="row">
+    <div class="small-2 large-2 columns">
+      avatar
+    </div>
+    <div class="small-10 large-10 columns">
+      info
+    </div>
+  </div>
+</script>
+
+
+
+

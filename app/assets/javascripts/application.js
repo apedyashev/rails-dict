@@ -18,7 +18,13 @@
 //= require ember-data
 //= require_self
 //= require rails_dict
-RailsDict = Ember.Application.create();
+
+RailsDict = Ember.Application.create({
+    LOG_TRANSITIONS: true,
+    ready: function(){
+    //ready
+    }
+});
 
 //= require_tree .
 
