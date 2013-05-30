@@ -1,4 +1,7 @@
 RailsDict::Application.routes.draw do
+  resources :dict_entries
+
+
   get "main/index"
 
   root :to => 'main#index'
