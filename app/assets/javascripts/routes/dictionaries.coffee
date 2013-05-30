@@ -1,10 +1,6 @@
 RailsDict.DictionariesRoute = Ember.Route.extend
-#  init: ->
-#    RailsDict.DictEntry.find()
-
   model: ->
-    entries = RailsDict.DictEntry.find()
-    entries
+    RailsDict.DictEntry.find()
 
 #If you don't explicitly define an App.IndexController, Ember.js will automatically generate one for you.
   setupController: (controller)->

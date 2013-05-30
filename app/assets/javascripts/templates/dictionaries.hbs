@@ -1,0 +1,32 @@
+<div class="small-2 large-4 columns">
+    <div class="button-bar">
+        <ul class="button-group">
+            <li>{{#linkTo "dictionaries.dicts" classNameBindings=":button :small" activeClass="disabled"}}Dictionaries{{/linkTo}}</li>
+            <li>{{#linkTo "dictionaries.collaborators" classNameBindings=":button :small" activeClass="disabled"}}Collaborators{{/linkTo}}</li>
+        </ul>
+    </div>
+
+    {{outlet dictwidgets}}
+</div>
+
+
+<div class="small-6 large-8 columns">
+    <table width="100%">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Russian</th>
+            <th>Serbian</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each entry in controller}}
+        <tr>
+            <td>{{entry.id}}</td>
+            <td>{{entry.phrase}}</td>
+            <td>{{entry.translation}}</td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>

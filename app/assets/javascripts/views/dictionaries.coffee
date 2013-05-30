@@ -3,8 +3,8 @@ RailsDict.DictsView = Ember.View.extend
 
 
 RailsDict.DictionariesDictsView = Ember.View.extend
-  templateName: 'dictionaries-dicts-widget'
+  templateName: 'dictionaries_dicts_widget'
 
 
 RailsDict.DictionariesCollaboratorsView = Ember.View.extend
-  templateName: 'dictionaries-collaborators-widget'
+  templateName: 'dictionaries_collaborators_widget'
