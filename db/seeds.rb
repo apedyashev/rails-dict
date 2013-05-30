@@ -6,7 +6,16 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-DictEntry.create(
-    phrase: 'sex',
-    translation: 'sex_rs'
-)
+DictEntry.delete_all
+
+DictEntry.create([{
+      phrase: 'word1',
+      translation: 'translation1'
+    }, {
+      phrase: 'word2',
+      translation: 'translation2'
+    }, {
+      phrase: 'word3',
+      translation: 'translation3'
+    }
+])

@@ -31,28 +31,20 @@
   <div class="small-6 large-8 columns">
     <table width="100%">
       <thead>
-      <tr>
-        <th>#</th>
-        <th>Russian</th>
-        <th>Serbian</th>
-      </tr>
+          <tr>
+            <th>#</th>
+            <th>Russian</th>
+            <th>Serbian</th>
+          </tr>
       </thead>
       <tbody>
-      <tr>
-        <td>1</td>
-        <td>окно</td>
-        <td>прозор</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>дождь</td>
-        <td>киша</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>берег</td>
-        <td>обала</td>
-      </tr>
+        {{#each entry in controller}}
+          <tr>
+            <td>{{entry.id}}</td>
+            <td>{{entry.phrase}}</td>
+            <td>{{entry.translation}}</td>
+          </tr>
+        {{/each}}
       </tbody>
     </table>
   </div>

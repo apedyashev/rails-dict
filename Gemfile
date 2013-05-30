@@ -24,9 +24,11 @@ group :assets do
   gem 'ember-source', '1.0.0.rc4' # or the version you need
   gem 'handlebars-source', '1.0.0.rc4' # or the version you need
 
-  gem 'json', '~> 1.7.7'
+
 end
 
+gem 'active_model_serializers', github: 'rails-api/active_model_serializers'
+gem 'json', '~> 1.7.7'
 gem 'jquery-rails'
 
 # To use ActiveModel has_secure_password
