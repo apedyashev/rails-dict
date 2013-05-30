@@ -1,17 +1,16 @@
 <script type="text/x-handlebars">
-<div class="row">
-    {{partial "mainmenu"}}
-</div>
+    <div class="row">
+        {{partial "mainmenu"}}
+    </div>
 
-<div class="row">
-  {{outlet main}}
-</div>
-
+    <div class="row">
+      {{outlet main}}
+    </div>
 </script>
 
 <script type="text/x-handlebars" data-template-name="_mainmenu">
   <dl class="sub-nav pull-right">
-    {{#linkTo dicts tagName="dd"}}<a href="javascript;">Dictionaries</a>{{/linkTo}}
+    {{#linkTo dictionaries tagName="dd"}}<a href="javascript;">Dictionaries</a>{{/linkTo}}
     {{#linkTo connections tagName="dd"}}<a href="javascript;">Connections</a>{{/linkTo}}
   </dl>
 </script>
@@ -20,16 +19,12 @@
   <div class="small-2 large-4 columns">
     <div class="button-bar">
       <ul class="button-group">
-        <li><a href="#" class="small button disabled">Dictionaries</a></li>
-        <li><a href="#" class="small button">Collaborators</a></li>
+        <li>{{#linkTo "dictionaries.dicts" classNameBindings=":button :small" activeClass="disabled"}}Dictionaries{{/linkTo}}</li>
+        <li>{{#linkTo "dictionaries.collaborators" classNameBindings=":button :small" activeClass="disabled"}}Collaborators{{/linkTo}}</li>
       </ul>
     </div>
 
-    <div class="panel">
-      panel
-    </div>
-
-
+    {{outlet dictwidgets}}
   </div>
 
 
@@ -87,4 +82,14 @@
 
 
 
+<script type="text/x-handlebars" data-template-name="dictionaries-dicts-widget">
+    <div class="panel">
+      Dicts widget
+    </div>
+</script>
 
+<script type="text/x-handlebars" data-template-name="dictionaries-collaborators-widget">
+  <div class="panel">
+    collaborators widget
+  </div>
+</script>

@@ -3,6 +3,9 @@ RailsDict::Application.routes.draw do
 
   root :to => 'main#index'
 
+  #redirect all requests to main::index to get EmberJS history API working
+  match "/*path" => "main#index"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
