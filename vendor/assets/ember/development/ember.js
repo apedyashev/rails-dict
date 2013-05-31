@@ -1,5 +1,5 @@
-// Version: v1.0.0-rc.4-9-ga3b1551
-// Last commit: a3b1551 (2013-05-28 22:01:35 -0400)
+// Version: v1.0.0-rc.4-17-gc70ab3a
+// Last commit: c70ab3a (2013-05-31 04:54:39 -0700)
 
 
 (function() {
@@ -151,8 +151,8 @@ Ember.deprecateFunc = function(message, func) {
 
 })();
 
-// Version: v1.0.0-rc.4-9-ga3b1551
-// Last commit: a3b1551 (2013-05-28 22:01:35 -0400)
+// Version: v1.0.0-rc.4-17-gc70ab3a
+// Last commit: c70ab3a (2013-05-31 04:54:39 -0700)
 
 
 (function() {
@@ -6580,6 +6580,29 @@ Ember.immediateObserver = function() {
 };
 
 /**
+  When observers fire, they are called with the arguments `obj`, `keyName`
+  and `value`. In a typical observer, value is the new, post-change value.
+
+  A `beforeObserver` fires before a property changes. The `value` argument contains
+  the pre-change value.
+
+  A `beforeObserver` is an alternative form of `.observesBefore()`.
+
+  ```javascript
+  App.PersonView = Ember.View.extend({
+    valueWillChange: function (obj, keyName, value) {
+      this.changingFrom = value;
+    }.observesBefore('content.value'),
+    valueDidChange: function(obj, keyName, value) {
+        // only run if updating a value already in the DOM
+        if(this.get('state') === 'inDOM') {
+            var color = value > this.changingFrom ? 'green' : 'red';
+            // logic
+        }
+    }.observes('content.value')
+  });
+  ```
+
   @method beforeObserver
   @for Ember
   @param {Function} func
@@ -25352,6 +25375,8 @@ Ember.Route = Ember.Object.extend({
 function parentRoute(route) {
   var handlerInfos = route.router.router.targetHandlerInfos;
 
+  if (!handlerInfos) { return; }
+
   var parent, current;
 
   for (var i=0, l=handlerInfos.length; i<l; i++) {
@@ -28087,10 +28112,11 @@ function resolverFor(namespace) {
 }
 
 function normalize(fullName) {
-  var split = fullName.split(':'),
+  var split = fullName.split(':', 2),
       type = split[0],
       name = split[1];
 
+  Ember.assert("Tried to normalize a container name without a colon (:) in it. You probably tried to lookup a name that did not contain a type, a colon, and a name. A proper lookup name would be `view:post`.", split.length === 2);
 
   if (type !== 'template') {
     var result = name;
@@ -29914,12 +29940,6 @@ helper('wait', wait);
 
 })();
 
-
-})();
-// Version: v1.0.0-rc.4-9-ga3b1551
-// Last commit: a3b1551 (2013-05-28 22:01:35 -0400)
-
-
 (function() {
 /**
 Ember
@@ -29929,3 +29949,5 @@ Ember
 
 })();
 
+
+})();
