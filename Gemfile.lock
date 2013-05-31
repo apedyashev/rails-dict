@@ -41,6 +41,9 @@ GEM
       execjs
       handlebars-source
     builder (3.0.4)
+    client_side_validations (3.2.5)
+    client_side_validations-ember (0.1.0)
+      client_side_validations (~> 3.2.0)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -130,6 +133,8 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers!
+  client_side_validations
+  client_side_validations-ember
   coffee-rails (~> 3.2.1)
   ember-rails
   ember-source (= 1.0.0.rc4)

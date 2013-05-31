@@ -1,0 +1,30 @@
+/*
+  Client Side Validations - Ember - v0.1.0
+  https://github.com/dockyard/client_side_validations-ember
+
+  Copyright (c) 2013 DockYard, LLC
+  Licensed under the MIT license
+  http://www.opensource.org/licenses/mit-license.php
+*/
+
+
+(function() {
+  var applyClientSideValidations = function(model, railsValidations) {
+
+    var emberValidations = {}, property;
+
+    for (property in railsValidations) {
+      emberValidations[property.camelize()] = railsValidations[property];
+    }
+//    App.User.reopen({validations: emberValidations});
+      model.reopen({validations: emberValidations});
+  }
+
+  <% ClientSideValidations::Ember.models.each do |rails, ember| %>
+    applyClientSideValidations(<%= ember %>, <%= rails.constantize.new.client_side_validation_hash.to_json %>);
+//    console.log(<%= rails.constantize.new.client_side_validation_hash.to_json %>);
+  <% end %>
+
+//    console.log(validations);
+//    RailsDict.bootstrapValidations(validations);
+}).call(this);
