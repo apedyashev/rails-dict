@@ -4,3 +4,7 @@ RailsDict.DictionariesController = Ember.Controller.extend
 
   save: ->
     console.log @phrase, @translation
+    newRecord = RailsDict.DictEntry.createRecord
+      phrase: @phrase
+      translation: @translation
+    newRecord.save()
