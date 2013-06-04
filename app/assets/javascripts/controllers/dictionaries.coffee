@@ -3,8 +3,11 @@ RailsDict.DictionariesController = Ember.Controller.extend
   translation: ''
 
   save: ->
-    console.log @phrase, @translation
     newRecord = RailsDict.DictEntry.createRecord
       phrase: @phrase
       translation: @translation
-    newRecord.save()
+
+    newRecord.validate().then ->
+      isValid = newRecord.get 'isValid'
+      console.log 'isValid', isValid
+      newRecord.save() if isValid

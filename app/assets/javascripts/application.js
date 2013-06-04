@@ -17,6 +17,7 @@
 //= require ember
 //= require ember-data
 //= require_self
+//= require libs/ember-validations-0.2.1
 //= require rails_dict
 //= require rails.validations
 //= require rails.validations.ember
@@ -27,9 +28,6 @@ RailsDict = Ember.Application.create({
     //ready
     }
 });
-
-//console.log(validations);
-//RailsDict.bootstrapValidations(validations);
 
 //= require_tree .
 
