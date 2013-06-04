@@ -21,11 +21,11 @@
         </thead>
         <tbody>
         <tr>
-            <td><a class="button mini"><span class="gicon-plus gicon-white"></span></a></td>
-            <td><input type="text"/></td>
-            <td><input type="text"/></td>
+            <td><a {{action save}}class="button mini"><span class="gicon-plus gicon-white"></span></a></td>
+            <td>{{view Ember.TextField placeholder="Phrase" valueBinding="phrase"}}</td>
+            <td>{{view Ember.TextField placeholder="Translation" valueBinding="translation"}}</td>
         </tr>
-        {{#each entry in controller}}
+        {{#each entry in model}}
         <tr>
             <td>{{entry.id}}</td>
             <td>{{entry.phrase}}</td>
