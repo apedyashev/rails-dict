@@ -11,3 +11,8 @@ RailsDict.DictionariesController = Ember.Controller.extend
       isValid = newRecord.get 'isValid'
       console.log 'isValid', isValid
       newRecord.save() if isValid
+    , (error)->
+      console.log 'fail', error
+#      isValid = @get('isValid')
+
+      console.log 'isValid', @get('isValid')
