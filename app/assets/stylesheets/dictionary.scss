@@ -1,0 +1,14 @@
+#dictionary{
+  tr{
+    cursor: pointer;
+    .action-icon{
+      display: none;
+      margin-right: 3px;
+    }
+  }
+  tr:hover{
+    .action-icon{
+      display: block;
+    }
+  }
+}
