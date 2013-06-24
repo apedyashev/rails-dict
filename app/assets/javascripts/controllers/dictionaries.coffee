@@ -52,4 +52,7 @@ RailsDict.DictionariesController = Ember.Controller.extend
   # This function is binded on click on the 'remove' icon
   ##
   remove: (entry)->
-    console.log 'remove', entry.get 'id'
+    entryId =  entry.get 'id'
+    if confirm "You are about to delete an entry ##{entryId}. Are you sure?"
+      entry.deleteRecord()
+      entry.save()
