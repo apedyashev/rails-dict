@@ -7,11 +7,15 @@ RailsDict.DictionariesController = Ember.Controller.extend
   ##
   # This function is binded to the 'Save' button click
   ##
-  save: ->
+  save: (entry)->
     # create new record and fill it with data from form
-    newRecord = RailsDict.DictEntry.createRecord
-      phrase: @phrase
-      translation: @translation
+    if entry?
+      @get('store').commit()
+      return
+    else
+      newRecord = RailsDict.DictEntry.createRecord
+        phrase: @phrase
+        translation: @translation
 
     #validate created record
     newRecord.validate().then =>
@@ -56,3 +60,6 @@ RailsDict.DictionariesController = Ember.Controller.extend
     if confirm "You are about to delete an entry ##{entryId}. Are you sure?"
       entry.deleteRecord()
       entry.save()
+
+  cancelEditMode: (entry)->
+    entry.set 'isEditMode', no

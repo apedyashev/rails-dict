@@ -1,18 +1,18 @@
 class DictEntriesController < ApplicationController
   respond_to :json
 
-  # GET dict_entries
+  # GET /dict_entries
   def index
     #render json: DictEntry.all
     respond_with DictEntry.all
   end
 
-  # GET dict_entries/:id
+  # GET /dict_entries/:id
   def show
     respond_with DictEntry.find(params[:id])
   end
 
-  # POST
+  # POST /dict_entries
   def create
     new_entry = DictEntry.new params[:dict_entry]
     if new_entry.save
@@ -22,7 +22,13 @@ class DictEntriesController < ApplicationController
     end
   end
 
-  # DELETE
+  # PUT /dict_entries/1.json
+  def update
+    entry = DictEntry.find(params[:id])
+    entry.update(:phrase => permitted_params.extract!(:phrase))
+  end
+
+  # DELETE /dict_entries/:id
   def destroy
     entry = DictEntry.find(params[:id])
     entry.destroy

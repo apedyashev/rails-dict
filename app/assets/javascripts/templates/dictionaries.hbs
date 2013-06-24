@@ -41,8 +41,15 @@
                     {{else}}
                         {{entry.translation}}
                     {{/if}}
-                    <span  {{action remove entry}} class="gicon-minus-sign pull-right action-icon" title="Delete entry"></span>
-                    <span  {{action edit entry}} class="gicon-edit pull-right action-icon" title="Edit entry"></span>
+                    {{#if entry.isEditMode}}
+                        <span class="pull-right">
+                        <span class="label" {{action save entry}} class="button mini "><span class="gicon-ok-sign gicon-white"></span></span>
+                        <span class="label alert" {{action cancelEditMode entry}} class="button mini"><span class="gicon-remove-sign gicon-white"></span></span>
+                        </span>
+                    {{else}}
+                        <span  {{action remove entry}} class="gicon-minus-sign pull-right action-icon" title="Delete entry"></span>
+                        <span  {{action edit entry}} class="gicon-edit pull-right action-icon" title="Edit entry"></span>
+                    {{/if}}
                 </td>
             </tr>
             {{/each}}
