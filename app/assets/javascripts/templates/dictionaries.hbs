@@ -30,8 +30,8 @@
             <td>{{entry.id}}</td>
             <td>{{entry.phrase}}</td>
             <td>{{entry.translation}}
-                <span  {{action remove }} class="gicon-minus-sign pull-right action-icon"></span>
-                <span  {{action edit }} class="gicon-edit pull-right action-icon"></span>
+                <span  {{action remove entry}} class="gicon-minus-sign pull-right action-icon" title="Delete entry"></span>
+                <span  {{action edit entry}} class="gicon-edit pull-right action-icon" title="Edit entry"></span>
             </td>
         </tr>
         {{/each}}
