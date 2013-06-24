@@ -1,8 +1,8 @@
 RailsDict.DictionariesController = Ember.Controller.extend
-  phrase: ''
-  translation: ''
-  phraseValid: yes
-  translationValid: yes
+  phrase            : ''
+  translation       : ''
+  phraseValid       : yes
+  translationValid  : yes
 
   ##
   # This function is binded to the 'Save' button click
@@ -46,7 +46,7 @@ RailsDict.DictionariesController = Ember.Controller.extend
   # This function is binded on click on the 'edit' icon
   ##
   edit: (entry)->
-    console.log 'edit', entry.get 'phrase'
+    entry.set 'isEditMode', yes
 
   ##
   # This function is binded on click on the 'remove' icon

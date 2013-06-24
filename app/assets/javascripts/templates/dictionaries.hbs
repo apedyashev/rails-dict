@@ -13,28 +13,39 @@
 <div class="small-6 large-8 columns">
     <table id="dictionary" width="100%">
         <thead>
-        <tr>
-            <th>#</th>
-            <th>Russian</th>
-            <th>Serbian</th>
-        </tr>
+            <tr>
+                <th>#</th>
+                <th>Russian</th>
+                <th>Serbian</th>
+            </tr>
         </thead>
         <tbody>
-        <tr>
-            <td><a {{action save}}class="button mini"><span class="gicon-plus gicon-white"></span></a></td>
-            <td>{{view Ember.TextField placeholder="Phrase" valueBinding="phrase" classBinding="phraseValid::error"}}</td>
-            <td>{{view Ember.TextField placeholder="Translation" valueBinding="translation" classBinding="translationValid::error"}}</td>
-        </tr>
-        {{#each entry in model}}
-        <tr>
-            <td>{{entry.id}}</td>
-            <td>{{entry.phrase}}</td>
-            <td>{{entry.translation}}
-                <span  {{action remove entry}} class="gicon-minus-sign pull-right action-icon" title="Delete entry"></span>
-                <span  {{action edit entry}} class="gicon-edit pull-right action-icon" title="Edit entry"></span>
-            </td>
-        </tr>
-        {{/each}}
+            <tr>
+                <td><a {{action save}}class="button mini"><span class="gicon-plus gicon-white"></span></a></td>
+                <td>{{view Ember.TextField placeholder="Phrase" valueBinding="phrase" classBinding="phraseValid::error"}}</td>
+                <td>{{view Ember.TextField placeholder="Translation" valueBinding="translation" classBinding="translationValid::error"}}</td>
+            </tr>
+            {{#each entry in model}}
+            <tr>
+                <td>{{entry.id}}</td>
+                <td>
+                    {{#if entry.isEditMode}}
+                        <input {{bindAttr value="entry.phrase"}} />
+                    {{else}}
+                        {{entry.phrase}}
+                    {{/if}}
+                </td>
+                <td>
+                    {{#if entry.isEditMode}}
+                        <input {{bindAttr value="entry.translation"}} />
+                    {{else}}
+                        {{entry.translation}}
+                    {{/if}}
+                    <span  {{action remove entry}} class="gicon-minus-sign pull-right action-icon" title="Delete entry"></span>
+                    <span  {{action edit entry}} class="gicon-edit pull-right action-icon" title="Edit entry"></span>
+                </td>
+            </tr>
+            {{/each}}
         </tbody>
     </table>
 </div>
