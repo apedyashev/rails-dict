@@ -5,24 +5,34 @@ RailsDict.DictionariesController = Ember.Controller.extend
   translationValid: yes
 
   save: ->
-    #@todo: add good validation
-    if (@phrase.length > 0) and (@translation.length > 0)
-      newRecord = RailsDict.DictEntry.createRecord
-        phrase: @phrase
-        translation: @translation
-      newRecord.save().then =>
-          @set 'phrase', ''
-          @set 'translation', ''
-      , (e)->
-        console.log '********', e
+    # create new record and fill it with data from form
+    newRecord = RailsDict.DictEntry.createRecord
+      phrase: @phrase
+      translation: @translation
 
-    #@todo: temporary solution. add kosher validation
-    @set 'phraseValid', (@phrase.length > 0)
-    @set 'translationValid', (@translation.length > 0)
+    #validate created record
+    newRecord.validate().then =>
+      isValid = newRecord.get 'isValid'
+      if isValid
+        #validation passed. save data on the server
+        newRecord.save().then =>
+          unless newRecord.get 'isDirty'
+            @set 'phrase', ''
+            @set 'translation', ''
+      else
+        #there are validation errors. delete record
+        newRecord.deleteRecord()
 
-#    newRecord.validate().then ->
-#      isValid = newRecord.get 'isValid'
-#      console.log 'isValid', isValid
-#      newRecord.save() if isValid
-#    ,(error)->
-#      console.log 'fail', error
+      #
+      # reflect validation errors in the view
+      #
+
+      #get error messages
+      phraseValidationMessage       = newRecord.errors.get('phrase')
+      translationValidationMessage  = newRecord.errors.get('translation')
+
+      #set binded vars to true or false
+      @set 'phraseValid', (phraseValidationMessage is undefined)
+      @set 'translationValid', (translationValidationMessage is undefined)
+    ,(error)->
+      console.log 'fail', error
