@@ -30,21 +30,21 @@
                 <td>{{entry.id}}</td>
                 <td>
                     {{#if entry.isEditMode}}
-                        <input {{bindAttr value="entry.phrase"}} />
+                    {{view Ember.TextField placeholder="Phrase" valueBinding="entry.phrase" classBinding="phraseValid::error"}}
                     {{else}}
                         {{entry.phrase}}
                     {{/if}}
                 </td>
                 <td>
                     {{#if entry.isEditMode}}
-                        <input {{bindAttr value="entry.translation"}} />
+                        {{view Ember.TextField placeholder="Translation" valueBinding="entry.translation" classBinding="translationValid::error"}}
                     {{else}}
                         {{entry.translation}}
                     {{/if}}
                     {{#if entry.isEditMode}}
                         <span class="pull-right">
-                        <span class="label" {{action save entry}} class="button mini "><span class="gicon-ok-sign gicon-white"></span></span>
-                        <span class="label alert" {{action cancelEditMode entry}} class="button mini"><span class="gicon-remove-sign gicon-white"></span></span>
+                        <span class="label button mini" {{action save entry}} ><span class="gicon-ok-sign gicon-white"></span></span>
+                        <span class="label button mini alert" {{action cancelEditMode entry}} ><span class="gicon-remove-sign gicon-white"></span></span>
                         </span>
                     {{else}}
                         <span  {{action remove entry}} class="gicon-minus-sign pull-right action-icon" title="Delete entry"></span>
