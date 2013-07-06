@@ -24,8 +24,14 @@ class DictEntriesController < ApplicationController
 
   # PUT /dict_entries/1.json
   def update
+    #params.inspect()
     entry = DictEntry.find(params[:id])
-    entry.update(:phrase => permitted_params.extract!(:phrase))
+    if entry.update_attributes(params[:dict_entry])
+      render json: nil, status: :ok
+    else
+      render json: nil, status: :fail
+    end
+
   end
 
   # DELETE /dict_entries/:id

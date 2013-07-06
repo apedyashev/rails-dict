@@ -8,7 +8,7 @@ RailsDict.DictionariesController = Ember.Controller.extend
   # This function is binded to the 'Save' button click
   ##
   save: (entry)->
-    # create new record and fill it with data from form
+
     if entry?
       console.log 'try to save', entry.get('phrase')
       entry.save()
@@ -18,6 +18,7 @@ RailsDict.DictionariesController = Ember.Controller.extend
 #      return
 
     else
+      # create new record and fill it with data from form
       newRecord = RailsDict.DictEntry.createRecord
         phrase: @phrase
         translation: @translation
