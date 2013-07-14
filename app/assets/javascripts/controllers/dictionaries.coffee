@@ -10,13 +10,9 @@ RailsDict.DictionariesController = Ember.Controller.extend
   save: (entry)->
 
     if entry?
-      console.log 'try to save', entry.get('phrase')
-      entry.save()
-      return
-#      RailsDict.DictEntry.find( entry.get('id') ).save()
-#      @get('store').commit()
+#      entry.save()
 #      return
-
+      newRecord = entry
     else
       # create new record and fill it with data from form
       newRecord = RailsDict.DictEntry.createRecord

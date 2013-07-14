@@ -24,7 +24,6 @@ class DictEntriesController < ApplicationController
 
   # PUT /dict_entries/1.json
   def update
-    #params.inspect()
     entry = DictEntry.find(params[:id])
     if entry.update_attributes(params[:dict_entry])
       render json: nil, status: :ok
