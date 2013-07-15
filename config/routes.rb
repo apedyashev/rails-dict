@@ -1,18 +1,22 @@
 RailsDict::Application.routes.draw do
   resources :authentications
 
-  devise_for :users
+  #To redirect this call into our controller
+  devise_for :users, path_names: {sign_in: "login", sign_out: "logout"},
+  controllers: {omniauth_callbacks: "authentications", registrations: "registrations"}
 
   resources :dict_entries
 
   get "main/index"
 
-  root to: 'authentications#home'
+  root :to => 'authentications#home'
 
   root :to => 'main#index'
 
   #redirect all requests to main::index to get EmberJS history API working
   match "/*path" => "main#index"
+
+
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
