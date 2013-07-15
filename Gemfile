@@ -55,3 +55,5 @@ gem 'nifty-generators'
 
 # To use debugger
 # gem 'debugger'
+
+gem "mocha", :group => :test
