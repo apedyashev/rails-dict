@@ -7,6 +7,8 @@ RailsDict::Application.routes.draw do
 
   get "main/index"
 
+  root to: 'authentications#home'
+
   root :to => 'main#index'
 
   #redirect all requests to main::index to get EmberJS history API working

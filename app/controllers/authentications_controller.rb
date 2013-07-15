@@ -3,6 +3,10 @@ class AuthenticationsController < ApplicationController
     @authentications = Authentication.all
   end
 
+  def home
+
+  end
+
   def create
     @authentication = Authentication.new(params[:authentication])
     if @authentication.save

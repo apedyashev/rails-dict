@@ -96,7 +96,10 @@ GEM
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    metaclass (0.0.1)
     mime-types (1.23)
+    mocha (0.14.0)
+      metaclass (~> 0.0.1)
     multi_json (1.7.4)
     multipart-post (1.2.0)
     mysql2 (0.3.11)
@@ -199,6 +202,7 @@ DEPENDENCIES
   handlebars-source (~> 1.0.12)
   jquery-rails
   json (~> 1.7.7)
+  mocha
   mysql2
   nifty-generators
   omniauth-facebook
