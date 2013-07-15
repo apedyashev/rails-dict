@@ -1,4 +1,6 @@
 RailsDict::Application.routes.draw do
+  devise_for :users
+
   resources :dict_entries
 
   get "main/index"
