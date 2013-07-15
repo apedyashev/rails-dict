@@ -33,6 +33,14 @@ gem 'active_model_serializers', github: 'rails-api/active_model_serializers'
 gem 'json', '~> 1.7.7'
 gem 'jquery-rails'
 
+#auth gems
+gem 'devise'
+gem 'omniauth-twitter'
+gem 'omniauth-facebook'
+gem 'twitter'
+gem 'fb_graph'
+gem 'nifty-generators'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
