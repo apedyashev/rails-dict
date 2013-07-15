@@ -36,6 +36,18 @@ class AuthenticationsController < ApplicationController
       current_user.authentications.create!(:provider => omni['provider'], :uid => omni['uid'], :token => token, :token_secret => token_secret)
       flash[:notice] = "Authentication successful."
       sign_in_and_redirect current_user
+    else
+      user = User.new
+      user.apply_omniauth(omni)
+
+      if user.save
+        flash[:notice] = "Logged in."
+        sign_in_and_redirect User.find(user.id)
+      else
+        session[:omniauth] = omni.except('extra')
+        redirect_to new_user_registration_path
+      end
+    end
   end
 
 

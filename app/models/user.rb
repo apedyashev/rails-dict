@@ -8,4 +8,10 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable,  :omniauthable
   # attr_accessible :title, :body
 
+  def apply_omniauth(omni)
+    authentications.build(:provider => omni['provider'],
+                          :uid => omni['uid'],
+                          :token => omni['credentials'].token,
+                          :token_secret => omni['credentials'].secret)
+  end
 end

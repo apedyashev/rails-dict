@@ -10,7 +10,7 @@ this
  `App.User.reopen({validations: emberValidations});`   
 to
  `model.reopen({validations: emberValidations});`    
-in *app/assets/jsvascripts/rails.validations.ember.js.erb*      
+in *app/assets/jsvascripts/rails.validations.ember.js.erb*
 
 2. Twitter/facebook authentication with omniauth, devise  by this tutorial:
  http://www.orhancanceylan.com/rails-twitter-and-facebook-authentications-with-omniauth-and-devise/
