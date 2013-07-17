@@ -11,9 +11,10 @@ this
 to
  `model.reopen({validations: emberValidations});`    
 in *app/assets/jsvascripts/rails.validations.ember.js.erb*
-
+Looks like bug of gem
 2. Twitter/facebook authentication with omniauth, devise  by this tutorial:
  http://www.orhancanceylan.com/rails-twitter-and-facebook-authentications-with-omniauth-and-devise/
  and
  https://github.com/plataformatec/devise
-Looks like bug of gem
+
+ one more article about omni auth: http://bernardi.me/using-multiple-omniauth-providers-with-omniauth-identity-on-the-main-user-model/
