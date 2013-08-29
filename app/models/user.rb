@@ -1,20 +1,14 @@
 class User < ActiveRecord::Base
-  has_many :authentications
+  attr_accessible :email, :name
 
-  # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable,
-  # :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable,  :omniauthable
-  # attr_accessible :title, :body
+  has_many :authorizations
+  validates :name, :email, :presence => true
 
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
 
-  def apply_omniauth(omni)
-    authentications.build(:provider => omni['provider'],
-                          :uid => omni['uid'],
-                          :token => omni['credentials'].toke,
-                          :token_secret => omni['credentials'].secret)
+  def add_provider(auth_hash)
+    # Check if the provider already exists, so we don't add it twice
+    unless authorizations.find_by_provider_and_uid(auth_hash["provider"], auth_hash["uid"])
+      Authorization.create :user => self, :provider => auth_hash["provider"], :uid => auth_hash["uid"]
+    end
   end
 end

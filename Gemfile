@@ -35,11 +35,16 @@ gem 'jquery-rails'
 
 #auth gems
 gem 'devise'
-gem 'omniauth-twitter'
+gem 'omniauth'
 gem 'omniauth-facebook'
-gem 'twitter'
-gem 'fb_graph'
-gem 'nifty-generators'
+gem 'oauth2'
+
+#gem 'devise'
+#gem 'omniauth-twitter'
+#gem 'omniauth-facebook'
+#gem 'twitter'
+#gem 'fb_graph'
+#gem 'nifty-generators'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

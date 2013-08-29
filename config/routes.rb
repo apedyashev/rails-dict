@@ -1,15 +1,27 @@
 RailsDict::Application.routes.draw do
-  resources :authentications
+  devise_for :users
+
+  get "sessions/new"
+
+  get "sessions/create"
+
+  get "sessions/failure"
+
+  #resources :authentications
 
   #To redirect this call into our controller
-  devise_for :users, path_names: {sign_in: "login", sign_out: "logout"},
-  controllers: {omniauth_callbacks: "authentications", registrations: "registrations"}
+  get   '/login', :to => 'sessions#new', :as => :login
+  match '/auth/:provider/callback', :to => 'sessions#create'
+  match '/auth/failure', :to => 'sessions#failure'
+
+  #devise_for :users, path_names: {sign_in: "login", sign_out: "logout"},
+  #controllers: {omniauth_callbacks: "authentications", registrations: "registrations"}
 
   resources :dict_entries
 
   get "main/index"
 
-  root :to => 'authentications#home'
+  #root :to => 'sessions#new'
 
   root :to => 'main#index'
 
