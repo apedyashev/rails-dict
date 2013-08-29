@@ -376,3 +376,19 @@
 .gicon-resize-horizontal {
   background-position: -456px -118px;
 }
+
+
+.gicon-big-btn{
+    padding-bottom: 0 !important;
+}
+
+.gicon-big {
+    background-image: url(./glyphicons.png);
+    width: 32px;
+    height: 32px;
+    margin-top: -5px;
+}
+
+.gicon-big-facebook{
+    background-position: -0px -1966px;
+}

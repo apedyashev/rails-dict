@@ -1,1 +1,7 @@
-<%= link_to "Connect With Fb", "/auth/facebook" %>
+<% content_for :title, "Login" %>
+
+<div class="row">
+    <div id="login-panel" class="panel small-2 large-4 large-offset-4 column">
+        <%= link_to raw('<i class="gicon-big gicon-big-facebook"></i>Login with Facebook'), "/auth/facebook" , :class=>"small button gicon-big-btn social-login"  %>
+    </div>
+</div>
