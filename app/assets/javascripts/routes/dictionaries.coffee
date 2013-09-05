@@ -13,7 +13,7 @@ RailsDict.DictionariesRoute = Ember.Route.extend
 
 RailsDict.DictionariesDictsRoute = Ember.Route.extend
   #If you don't explicitly define an App.IndexController, Ember.js will automatically generate one for you.
-  setupController: (controller)->
+#  setupController: (controller)->
 #    controller.set 'isNoWidgetsSelected', false
 
   renderTemplate: ->
@@ -24,7 +24,7 @@ RailsDict.DictionariesDictsRoute = Ember.Route.extend
 
 RailsDict.DictionariesCollaboratorsRoute = Ember.Route.extend
 #If you don't explicitly define an App.IndexController, Ember.js will automatically generate one for you.
-  setupController: (controller)->
+#  setupController: (controller)->
 #    controller.set 'isNoWidgetsSelected', false
 
   renderTemplate: ->

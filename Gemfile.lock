@@ -73,6 +73,9 @@ GEM
       multi_json (~> 1.0)
     faraday (0.8.7)
       multipart-post (~> 1.1)
+    gon (4.1.1)
+      actionpack (>= 2.3.0)
+      json
     handlebars-source (1.0.12)
     hashie (2.0.5)
     hike (1.2.2)
@@ -172,6 +175,7 @@ DEPENDENCIES
   devise
   ember-rails
   ember-source (= 1.0.0.rc6.2)
+  gon
   handlebars-source (~> 1.0.12)
   jquery-rails
   json (~> 1.7.7)

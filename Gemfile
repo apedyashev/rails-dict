@@ -39,6 +39,8 @@ gem 'omniauth'
 gem 'omniauth-facebook'
 gem 'oauth2'
 
+gem 'gon'
+
 #gem 'devise'
 #gem 'omniauth-twitter'
 #gem 'omniauth-facebook'

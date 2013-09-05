@@ -24,10 +24,12 @@
 
 RailsDict = Ember.Application.create({
     LOG_TRANSITIONS: true,
-    ready: function(){
+
+//    ready: function(){
     //ready
-    }
+//    }
 });
+
 
 //= require_tree .
 

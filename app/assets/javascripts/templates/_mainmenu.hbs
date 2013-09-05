@@ -1,3 +1,7 @@
+<div class="user-info">
+    <img {{bindAttr src="userAvatar"}} class="avatar"/>
+    <span class="user-name">{{fullName}}</span>
+</div>
 <dl class="sub-nav pull-right">
     {{#linkTo "dictionaries" tagName="dd"}}<a href="javascript;">Dictionaries</a>{{/linkTo}}
     {{#linkTo "connections" tagName="dd"}}<a href="javascript;">Connections</a>{{/linkTo}}
