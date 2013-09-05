@@ -12,10 +12,14 @@
 # It's strongly recommended to check this file into your version control system.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20130905185401) do
 =======
 ActiveRecord::Schema.define(:version => 20130905193713) do
 >>>>>>> e5164fa... added activity log migration
+=======
+ActiveRecord::Schema.define(:version => 20130905185401) do
+>>>>>>> e810978... added activity log migration
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action",     :limit => 15
