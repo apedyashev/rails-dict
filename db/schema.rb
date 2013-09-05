@@ -11,15 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20130905185401) do
-=======
-ActiveRecord::Schema.define(:version => 20130905193713) do
->>>>>>> e5164fa... added activity log migration
-=======
-ActiveRecord::Schema.define(:version => 20130905185401) do
->>>>>>> e810978... added activity log migration
+ActiveRecord::Schema.define(:version => 20130905203039) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action",     :limit => 15
@@ -28,6 +20,8 @@ ActiveRecord::Schema.define(:version => 20130905185401) do
     t.string   "url"
     t.datetime "created_at",               :null => false
     t.datetime "updated_at",               :null => false
+    t.integer  "user_id"
+    t.string   "data"
   end
 
   create_table "authentications", :force => true do |t|
