@@ -18,3 +18,6 @@ Looks like bug of gem
  https://github.com/plataformatec/devise
 
  one more article about omni auth: http://bernardi.me/using-multiple-omniauth-providers-with-omniauth-identity-on-the-main-user-model/
+
+http://bernardi.me/using-multiple-omniauth-providers-with-omniauth-identity-on-the-main-user-model/
+ http://net.tutsplus.com/tutorials/ruby/how-to-use-omniauth-to-authenticate-your-users/
