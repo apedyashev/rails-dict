@@ -3,6 +3,9 @@ class DictEntriesController < ApplicationController
 
   # GET /dict_entries
   def index
+    l = ActivityLogger.new
+    l.log
+
     #render json: DictEntry.all
     respond_with DictEntry.all
   end
