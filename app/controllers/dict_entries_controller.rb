@@ -3,9 +3,6 @@ class DictEntriesController < ApplicationController
 
   # GET /dict_entries
   def index
-    l = ActivityLogger.new
-    l.log
-
     #render json: DictEntry.all
     respond_with DictEntry.all
   end
@@ -17,11 +14,15 @@ class DictEntriesController < ApplicationController
 
   # POST /dict_entries
   def create
+    activity_logger = ActivityLogger.new
+
     new_entry = DictEntry.new params[:dict_entry]
     if new_entry.save
       render json: new_entry
+      activity_logger.log action: 'add_word_ok'
     else
       render json: new_entry, status: 422
+      activity_logger.log action: 'add_word_fail'
     end
   end
 
