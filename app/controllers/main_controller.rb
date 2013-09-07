@@ -1,6 +1,5 @@
-class MainController < ApplicationController
+class MainController < Base::UserController
   def index
-    #raise session.to_yaml
 
     @avatar = 'avatar.jpg'
     if session[:user_id]
