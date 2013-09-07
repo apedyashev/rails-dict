@@ -16,6 +16,7 @@ Looks like bug of gem
  http://www.orhancanceylan.com/rails-twitter-and-facebook-authentications-with-omniauth-and-devise/
  and
  https://github.com/plataformatec/devise
+3. rails generate resource Connections user_id:integer connected_user_id:integer is_connection_accepted:boolean
 
  one more article about omni auth: http://bernardi.me/using-multiple-omniauth-providers-with-omniauth-identity-on-the-main-user-model/
 

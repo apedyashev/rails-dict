@@ -3,6 +3,7 @@ DS.RESTAdapter.configure "plurals",
   dict_entry: "dict_entries"
 
 
+
 RailsDict.Store = DS.Store.extend
   adapter: DS.RESTAdapter.create()
 

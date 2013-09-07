@@ -1,4 +1,11 @@
 RailsDict::Application.routes.draw do
+  resources :user_connections
+  resources :users
+
+
+  #resources :connections
+
+
   devise_for :users
 
   get "sessions/new"
@@ -19,14 +26,14 @@ RailsDict::Application.routes.draw do
 
   resources :dict_entries
 
-  get "main/index"
 
-  #root :to => 'sessions#new'
+  get "main/index"
 
   root :to => 'main#index'
 
   #redirect all requests to main::index to get EmberJS history API working
   match "/*path" => "main#index"
+
 
 
 
