@@ -3,7 +3,7 @@ RailsDict.ConnectionsRoute = Ember.Route.extend
   setupController: (controller)->
 #    controller.set 'title', 'Home'
     controller.set 'model', RailsDict.UserConnection.find()
-    RailsDict.User.find()
+    controller.set 'allUsers', RailsDict.User.find()
 
   renderTemplate: ->
     @render

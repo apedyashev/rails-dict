@@ -73,6 +73,8 @@ GEM
       multi_json (~> 1.0)
     faraday (0.8.7)
       multipart-post (~> 1.1)
+    font-awesome-rails (3.2.1.3)
+      railties (>= 3.2, < 5.0)
     gon (4.1.1)
       actionpack (>= 2.3.0)
       json
@@ -175,6 +177,7 @@ DEPENDENCIES
   devise
   ember-rails
   ember-source (= 1.0.0.rc6.2)
+  font-awesome-rails
   gon
   handlebars-source (~> 1.0.12)
   jquery-rails

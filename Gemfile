@@ -26,6 +26,8 @@ group :assets do
   gem 'client_side_validations'
   gem 'client_side_validations-ember'
 
+  gem "font-awesome-rails"
+
 
 end
 

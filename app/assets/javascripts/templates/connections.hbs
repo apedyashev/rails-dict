@@ -15,3 +15,28 @@
         info
     </div>
 </div>
+
+<div class="small-6 large-8 columns">
+    <table id="dictionary" width="100%">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>email</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each entry in allUsers}}
+        <tr>
+            <td> <img {{bindAttr src="entry.avatar" }}/></td>
+            <td>
+                <i {{bindAttr class="entry.isMale:icon-male entry.isFemale:icon-female"}}></i> {{entry.fullName}}
+            </td>
+            <td>
+                {{entry.email}}
+            </td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
