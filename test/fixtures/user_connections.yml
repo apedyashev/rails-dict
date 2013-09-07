@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 
+  connected_user_id: 
+  is_connection_accepted: false
+
+two:
+  user_id: 
+  connected_user_id: 
+  is_connection_accepted: false

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130907172227) do
+ActiveRecord::Schema.define(:version => 20130907174246) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action",     :limit => 15
@@ -47,6 +47,14 @@ ActiveRecord::Schema.define(:version => 20130907172227) do
     t.text     "translation"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+  end
+
+  create_table "user_connections", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "connected_user_id"
+    t.boolean  "is_connection_accepted", :default => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
   end
 
   create_table "users", :force => true do |t|
