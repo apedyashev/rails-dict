@@ -1,9 +1,9 @@
 RailsDict.User = DS.Model.extend
   firstName: DS.attr('string')
   lastName: DS.attr('string')
-  email: DS.attr('string')
   gender: DS.attr('string')
   avatar: DS.attr('string')
+  requestSent: yes
   fullName: (->
     @get('firstName') + ' ' + @get('lastName')
   ).property('firstName', 'lastName')
