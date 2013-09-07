@@ -1,7 +1,9 @@
 class ActivityLogger
-  ACTION_ADD_WORD_OK    = 'awdok'
-  ACTION_ADD_WORD_FAIL  = 'awdfail'
-  ACTION_DELETE_WORD    = 'delwd'
+  ACTION_ADD_WORD_OK            = 'awdok'
+  ACTION_ADD_WORD_FAIL          = 'awdfail'
+  ACTION_ADD_WORD_UPDATE_OK     = 'awdupdok'
+  ACTION_ADD_WORD_UPDATE_FAIL   = 'awdupdfail'
+  ACTION_DELETE_WORD            = 'delwd'
 
   #
   # sets user_id (must be called when logger is initialized)
@@ -43,16 +45,28 @@ class ActivityLogger
     self.log params
   end
 
+  #
+  # logs 'update word ok' action
+  def log_update_word_ok(params)
+    params[:action] = ACTION_ADD_WORD_UPDATE_OK
+    self.log params
+  end
+
+
+  #
+  # logs 'update word fail' action
+  def log_update_word_fail(params)
+    params[:action] = ACTION_ADD_WORD_UPDATE_FAIL
+    self.log params
+  end
 
   #
   # writes all fields to DB
   def log(params)
     params[:ip_addr]    = @ip_addr
     params[:x_ip_addr]  = @x_ip_addr
-    params[:url]        = '/dicts'
+    params[:url]        = ''
 
-    #request = ActionDispatch::Request.new(ENV)
-    #raise request.to_yaml
     params[:user_id]    = @user_id
 
     act_log = ActivityLog.new params

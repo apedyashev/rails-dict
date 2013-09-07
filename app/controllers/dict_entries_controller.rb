@@ -28,9 +28,12 @@ class DictEntriesController < Base::LoggedUserController
   # PUT /dict_entries/1.json
   def update
     entry = DictEntry.find(params[:id])
+    old_entry = entry.dup
     if entry.update_attributes(params[:dict_entry])
+      @activity_logger.log_update_word_ok  data: {old_entry: old_entry, entry: entry}
       render json: nil, status: :ok
     else
+      @activity_logger.log_update_word_fail data: {entry: entry}
       render json: nil, status: :fail
     end
 

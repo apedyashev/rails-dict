@@ -11,17 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130905203039) do
+ActiveRecord::Schema.define(:version => 20130907172227) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action",     :limit => 15
     t.string   "ip_addr",    :limit => 20
     t.string   "x_ip_addr",  :limit => 20
     t.string   "url"
-    t.datetime "created_at",               :null => false
-    t.datetime "updated_at",               :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
     t.integer  "user_id"
-    t.string   "data"
+    t.string   "data",       :limit => 5000
   end
 
   create_table "authentications", :force => true do |t|
