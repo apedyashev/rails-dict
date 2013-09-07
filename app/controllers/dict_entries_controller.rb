@@ -17,10 +17,11 @@ class DictEntriesController < Base::LoggedUserController
     new_entry = DictEntry.new params[:dict_entry]
     if new_entry.save
       render json: new_entry
-      @activity_logger.log action: 'add_d_entry_ok', data: {dict_entry_id: new_entry.id}
+      #@activity_logger.log action: 'add_d_entry_ok', data: {dict_entry_id: new_entry.id}
+      @activity_logger.log_add_word_ok data: {dict_entry_id: new_entry.id}
     else
       render json: new_entry, status: 422
-      @activity_logger.log action: 'add_d_entry_fail'
+      @activity_logger.log_add_word_fail data: {new_entry: new_entry}
     end
   end
 
@@ -38,6 +39,7 @@ class DictEntriesController < Base::LoggedUserController
   # DELETE /dict_entries/:id
   def destroy
     entry = DictEntry.find(params[:id])
+    @activity_logger.log_delete_word data: {entry: entry}
     entry.destroy
     render json: nil, status: :ok
   end
