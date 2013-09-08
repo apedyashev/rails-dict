@@ -4,7 +4,7 @@ RailsDict.DictionariesRoute = Ember.Route.extend
 
 #If you don't explicitly define an App.IndexController, Ember.js will automatically generate one for you.
   setupController: (controller)->
-    controller.set 'model', RailsDict.DictEntry.find()
+    controller.set 'model', @get('store').find('dict_entry') #RailsDict.DictEntry.find()
 
   renderTemplate: ->
     @render

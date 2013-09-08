@@ -21,7 +21,7 @@ group :assets do
 
   gem 'zurb-foundation', '~> 4.0.0'
   gem 'ember-rails'
-  gem 'ember-source', '1.0.0.rc6.2'
+  gem 'ember-source', '~> 1.0.0.rc8'
   gem "handlebars-source", "~> 1.0.12"
   gem 'client_side_validations'
   gem 'client_side_validations-ember'

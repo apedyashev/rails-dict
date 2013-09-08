@@ -1,3 +1,8 @@
 RailsDict.UsersSearchView = Ember.TextField.extend #Em.View.extend
-  keyDown: (e)->
-    this.get('controller').send('updateKey', e.keyCode);
+  didInsertElement: ->
+    this.$().focus()
+
+#  keyDown: (e)->
+#    console.log e, @get('controller')
+#    @get('controller').send('updateKey', e.keyCode)
+

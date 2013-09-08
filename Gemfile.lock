@@ -66,7 +66,7 @@ GEM
       ember-source (>= 1.0.0.rc2.2)
       execjs (>= 1.2)
       railties (>= 3.1)
-    ember-source (1.0.0.rc6.2)
+    ember-source (1.0.0)
       handlebars-source (= 1.0.12)
     erubis (2.7.0)
     execjs (1.4.0)
@@ -176,7 +176,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   devise
   ember-rails
-  ember-source (= 1.0.0.rc6.2)
+  ember-source (~> 1.0.0.rc8)
   font-awesome-rails
   gon
   handlebars-source (~> 1.0.12)
