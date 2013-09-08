@@ -1,4 +1,5 @@
 RailsDict.UserConnection = DS.Model.extend
-  userId: DS.attr('number')
+  user_id: DS.attr('number')
   connectedUserId: DS.attr('number')
-  isConnectionAccepted: DS.attr('boolean')
+  is_connection_accepted: DS.attr('boolean')
+  connected_user: DS.attr()
