@@ -1,6 +1,8 @@
 RailsDict.ConnectionsController = Ember.Controller.extend
   needs: "connectionsSearch"
 
+  isSearchVisible: no
+
   actions:
     remove: (connection)->
       #find user  in the 'search users' list
@@ -13,3 +15,12 @@ RailsDict.ConnectionsController = Ember.Controller.extend
       connection.save().then =>
         user.set 'isConnectedWithLoggedUser', false
         user.set 'isLoggedUserRequestedConnection', false
+
+    toggleSearch: ->
+      isSearchVisible = !@get('isSearchVisible')
+      @set 'isSearchVisible', isSearchVisible
+
+      if isSearchVisible
+        @transitionToRoute 'connections.search'
+      else
+        @transitionToRoute 'connections'
