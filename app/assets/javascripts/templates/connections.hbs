@@ -7,7 +7,7 @@
 
                 </div>
                 <div class="large-4 columns pull-right">
-                    {{view RailsDict.UsersSearchView placeholder="Users Search" valueBinding="searchTerm" insert-newline="doConnectionsSearch" }}
+                    <span class="pull-right">My connections</span>
                 </div>
             </th>
         </tr>
@@ -17,6 +17,7 @@
         <tr>
             <td class="avatar"><img {{bindAttr src="entry.connected_user.avatar" }}/></td>
             <td class="name">
+                {{entry.connected_user.name }}
             </td>
             <td class="email">
 
@@ -42,17 +43,22 @@
         </tr>
         </thead>
         <tbody>
-        {{#each entry in allUsers}}
+        {{#each user in allUsers}}
         <tr>
-            <td class="avatar"> <img {{bindAttr src="entry.avatar" }}/></td>
+            <td class="avatar"> <img {{bindAttr src="user.avatar" }}/></td>
             <td class="name">
-                <i {{bindAttr class="entry.isMale:icon-male entry.isFemale:icon-female"}}></i> {{entry.fullName}}
+                <i {{bindAttr class="user.isMale:icon-male user.isFemale:icon-female"}}></i> {{user.fullName}}
+                {{renderStatusIsConnectedWithMe user}}
             </td>
-            <td class="email">
-                {{# if entry.requestSent}}
-                <a href="#" class="tiny button success"><i class="icon-ok icon-2x"></i>Request Sent</a>
+            <td class="action">
+                {{#if user.isConnectedWithLoggedUser}}
+                    <a {{action removeConnection user }} class="tiny button alert"><i class="icon-remove icon-2x"></i> Unconnect</a>
                 {{else}}
-                <a href="#" class="tiny button"><i class="icon-group icon-2x"></i>Request Connection</a>
+                    {{#if user.isLoggedUserRequestedConnection}}
+                        <a class="tiny button success"><i class="icon-ok icon-2x"></i> Request Sent</a>
+                    {{else}}
+                        <a {{action requestConnection user }} class="tiny button"><i class="icon-group icon-2x"></i> Request Connection</a>
+                    {{/if}}
                 {{/if}}
 
             </td>

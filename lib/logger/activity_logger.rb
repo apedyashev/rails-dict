@@ -4,6 +4,8 @@ class ActivityLogger
   ACTION_ADD_WORD_UPDATE_OK     = 'awdupdok'
   ACTION_ADD_WORD_UPDATE_FAIL   = 'awdupdfail'
   ACTION_DELETE_WORD            = 'delwd'
+  ACTION_ADD_CONNECTION         = 'addconn'
+  ACTION_DELETE_CONNECTION      = 'delconn'
 
   #
   # sets user_id (must be called when logger is initialized)
@@ -57,6 +59,16 @@ class ActivityLogger
   # logs 'update word fail' action
   def log_update_word_fail(params)
     params[:action] = ACTION_ADD_WORD_UPDATE_FAIL
+    self.log params
+  end
+
+  def log_delete_connection(params)
+    params[:action] = ACTION_DELETE_CONNECTION
+    self.log params
+  end
+
+  def log_add_connection(params)
+    params[:action] = ACTION_ADD_CONNECTION
     self.log params
   end
 
