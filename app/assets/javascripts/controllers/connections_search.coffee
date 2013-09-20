@@ -35,6 +35,8 @@ RailsDict.ConnectionsSearchController = Ember.Controller.extend
     requestConnection: (userToBeConnected)->
       console.log 'requestConnection'
       @get('store').createRecord('user_connection', {connected_user_id: userToBeConnected.get('id')}).save().then =>
+        userToBeConnected.set 'isLoggedUserRequestedConnection', true
+
         console.log 'saved'
         requestedConns = @get 'loggedUserRequestedConnections'
         console.log 'requestedConns', requestedConns
@@ -55,8 +57,6 @@ RailsDict.ConnectionsSearchController = Ember.Controller.extend
             cons.splice( $.inArray(user.get('id'), cons), 1)
             @set 'loggedUserConnections', cons
             user.set 'loggedUserConnections', cons
-            item.destroy()
-            console.log 'after', @get('connections')
 
       @get('connections').filter (item, index, enumerable) =>
         console.log item.get('id')
