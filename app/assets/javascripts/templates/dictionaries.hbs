@@ -25,7 +25,7 @@
                 <td>{{view Ember.TextField placeholder="Phrase" valueBinding="phrase" classBinding="phraseValid::error"}}</td>
                 <td>{{view Ember.TextField placeholder="Translation" valueBinding="translation" classBinding="translationValid::error"}}</td>
             </tr>
-            {{#each entry in model}}
+            {{#each entry in words}}
             <tr>
                 <td>{{entry.id}}</td>
                 <td>

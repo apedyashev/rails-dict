@@ -1,0 +1,39 @@
+<div class="small-12 large-12 columns">
+    <table id="available-users" width="100%">
+        <thead>
+        <tr>
+            <th colspan="3">
+                <div class="large-8 columns">
+                    Shown <span class="round success label">{{usersShown}}</span> of <span class="round success label">{{usersTotal}}</span> users
+                </div>
+                <div class="large-4 columns pull-right">
+                {{view RailsDict.UsersSearchView placeholder="Users Search" valueBinding="searchTerm" insert-newline="doSearch" }}
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each user in allUsers}}
+        <tr>
+            <td class="avatar"> <img {{bindAttr src="user.avatar" }}/></td>
+            <td class="name">
+                <i {{bindAttr class="user.isMale:icon-male user.isFemale:icon-female"}}></i> {{user.fullName}}
+                {{renderStatusIsConnectedWithMe user}}
+            </td>
+            <td class="action">
+                {{#if user.isConnectedWithLoggedUser}}
+                    <a {{action removeConnection user }} class="tiny button alert"><i class="icon-remove icon-2x"></i> Unconnect</a>
+                {{else}}
+                    {{#if user.isLoggedUserRequestedConnection}}
+                        <a class="tiny button success"><i class="icon-ok icon-2x"></i> Request Sent</a>
+                    {{else}}
+                        <a {{action requestConnection user }} class="tiny button"><i class="icon-group icon-2x"></i> Request Connection</a>
+                    {{/if}}
+                {{/if}}
+
+            </td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>

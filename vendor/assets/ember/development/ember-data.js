@@ -1,5 +1,14 @@
-// Version: v1.0.0-beta.1-132-gf90a406
-// Last commit: f90a406 (2013-09-06 21:45:15 -0700)
+// ==========================================================================
+// Project:   Ember Data
+// Copyright: ©2011-2012 Tilde Inc. and contributors.
+//            Portions ©2011 Living Social Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+
+// Version: v1.0.0-beta.1-231-g3e3061d
+// Last commit: 3e3061d (2013-09-19 23:43:50 -0700)
 
 
 (function() {
@@ -139,7 +148,7 @@ DS.JSONSerializer = Ember.Object.extend({
 
     // if provided, use the mapping provided by `attrs` in
     // the serializer
-    key = attrs && attrs[key] || key;
+    key = attrs && attrs[key] || (this.keyForAttribute ? this.keyForAttribute(key) : key);
 
     json[key] = value;
   },
@@ -149,12 +158,16 @@ DS.JSONSerializer = Ember.Object.extend({
 
     var belongsTo = get(record, key);
 
-    if (isNone(belongsTo)) { return; }
+    key = this.keyForRelationship ? this.keyForRelationship(key, "belongsTo") : key;
 
-    json[key] = get(belongsTo, 'id');
+    if (isNone(belongsTo)) {
+      json[key] = belongsTo;
+    } else {
+      json[key] = get(belongsTo, 'id');
+    }
 
     if (relationship.options.polymorphic) {
-      json[key + "_type"] = belongsTo.constructor.typeKey;
+      this.serializePolymorphicType(record, json, relationship);
     }
   },
 
@@ -168,6 +181,11 @@ DS.JSONSerializer = Ember.Object.extend({
       // TODO support for polymorphic manyToNone and manyToMany relationships
     }
   },
+
+  /**
+    You can use this method to customize how polymorphic objects are serialized.
+  */
+  serializePolymorphicType: Ember.K,
 
   // EXTRACT
 
@@ -449,7 +467,7 @@ DS.NumberTransform = DS.Transform.extend({
 
 
 (function() {
-var none = Ember.isNone, empty = Ember.isEmpty;
+var none = Ember.isNone;
 
 DS.StringTransform = DS.Transform.extend({
 
@@ -462,6 +480,7 @@ DS.StringTransform = DS.Transform.extend({
   }
 
 });
+
 })();
 
 
@@ -695,6 +714,14 @@ DS.RecordArray = Ember.ArrayProxy.extend(Ember.Evented, {
 
   removeRecord: function(record) {
     get(this, 'content').removeObject(record);
+  },
+
+  save: function() {
+    var promise = Ember.RSVP.all(this.invoke("save")).then(function(array) {
+      return Ember.A(array);
+    });
+
+    return DS.PromiseArray.create({ promise: promise });
   }
 });
 
@@ -855,10 +882,11 @@ DS.ManyArray = DS.RecordArray.extend({
   fetch: function() {
     var records = get(this, 'content'),
         store = get(this, 'store'),
-        owner = get(this, 'owner');
+        owner = get(this, 'owner'),
+        resolver = Ember.RSVP.defer();
 
     var unloadedRecords = records.filterProperty('isEmpty', true);
-    store.fetchMany(unloadedRecords, owner);
+    store.fetchMany(unloadedRecords, owner, resolver);
   },
 
   // Overrides Ember.Array's replace method to implement
@@ -1143,7 +1171,6 @@ var isNone = Ember.isNone;
 var forEach = Ember.EnumerableUtils.forEach;
 var indexOf = Ember.EnumerableUtils.indexOf;
 var map = Ember.EnumerableUtils.map;
-var OrderedSet = Ember.OrderedSet;
 var resolve = Ember.RSVP.resolve;
 
 // Implementors Note:
@@ -1354,7 +1381,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     @returns String if the adapter can generate one, an ID
   */
   _generateId: function(type) {
-    var adapter = this.adapterForType(type);
+    var adapter = this.adapterFor(type);
 
     if (adapter && adapter.generateIdForRecord) {
       return adapter.generateIdForRecord(this);
@@ -1458,12 +1485,10 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
   findById: function(type, id) {
     type = this.modelFor(type);
 
-    var record = this.getById(type, id);
-    if (get(record, 'isEmpty')) {
-      return promiseObject(this.fetchRecord(record));
-    } else {
-      return promiseObject(resolve(record));
-    }
+    var record = this.recordForId(type, id);
+
+    var promise = this.fetchRecord(record) || resolve(record);
+    return promiseObject(promise);
   },
 
   /**
@@ -1496,13 +1521,17 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     @returns Promise
   */
   fetchRecord: function(record) {
+    if (isNone(record)) { return null; }
+    if (record._loadingPromise) { return record._loadingPromise; }
+    if (!get(record, 'isEmpty')) { return null; }
+
     var type = record.constructor,
         id = get(record, 'id'),
         resolver = Ember.RSVP.defer();
 
-    record.loadingData();
+    record.loadingData(resolver.promise);
 
-    var adapter = this.adapterForType(type);
+    var adapter = this.adapterFor(type);
 
     Ember.assert("You tried to find a record but you have no adapter (for " + type + ")", adapter);
     Ember.assert("You tried to find a record but your adapter (for " + type + ") does not implement 'find'", adapter.find);
@@ -1516,7 +1545,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     Get a record by a given type and ID without triggering a fetch.
 
     This method will synchronously return the record if it's available.
-    Otherwise, it will return undefined.
+    Otherwise, it will return null.
 
     ```js
     var post = store.getById('post', 1);
@@ -1532,7 +1561,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     if (this.hasRecordForId(type, id)) {
       return this.recordForId(type, id);
     } else {
-      return this.buildRecord(type, id);
+      return null;
     }
   },
 
@@ -1551,7 +1580,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
   */
   reloadRecord: function(record, resolver) {
     var type = record.constructor,
-        adapter = this.adapterForType(type),
+        adapter = this.adapterFor(type),
         store = this,
         id = get(record, 'id');
 
@@ -1593,7 +1622,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
 
     forEach(recordsByTypeMap, function(type, records) {
       var ids = records.mapProperty('id'),
-          adapter = this.adapterForType(type);
+          adapter = this.adapterFor(type);
 
       Ember.assert("You tried to load many records but you have no adapter (for " + type + ")", adapter);
       Ember.assert("You tried to load many records but your adapter does not implement `findMany`", adapter.findMany);
@@ -1697,7 +1726,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     @return DS.ManyArray
   */
   findHasMany: function(owner, link, relationship, resolver) {
-    var adapter = this.adapterForType(owner.constructor);
+    var adapter = this.adapterFor(owner.constructor);
 
     Ember.assert("You tried to load a hasMany relationship but you have no adapter (for " + owner.constructor + ")", adapter);
     Ember.assert("You tried to load a hasMany relationship from a specified `link` in the original payload but your adapter does not implement `findHasMany`", adapter.findHasMany);
@@ -1734,7 +1763,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
       store: this
     });
 
-    var adapter = this.adapterForType(type),
+    var adapter = this.adapterFor(type),
         resolver = Ember.RSVP.defer();
 
     Ember.assert("You tried to load a query but you have no adapter (for " + type + ")", adapter);
@@ -1769,7 +1798,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     @returns Promise
   */
   fetchAll: function(type, array) {
-    var adapter = this.adapterForType(type),
+    var adapter = this.adapterFor(type),
         sinceToken = this.typeMapFor(type).metadata.since,
         resolver = Ember.RSVP.defer();
 
@@ -1827,6 +1856,24 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     return array;
   },
 
+
+  /**
+    This method unloads all of the known records for a given type.
+
+    @method unloadAll
+    @param {Class} type
+  */
+  unloadAll: function(type) {
+    type = this.modelFor(type);
+
+    var typeMap = this.typeMapFor(type),
+        records = typeMap.records, record;
+
+    while(record = records.pop()) {
+      record.unloadRecord();
+    }
+  },
+
   /**
     Takes a type and filter function, and returns a live RecordArray that
     remains up to date as new records are loaded into the store or created
@@ -1842,14 +1889,6 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     If any of a record's properties change, or if it changes state, the
     filter function will be invoked again to determine whether it should
     still be in the array.
-
-    Note that the existence of a filter on a type will trigger immediate
-    materialization of all loaded data for a given type, so you might
-    not want to use filters for a type if you are loading many records
-    into the store, many of which are not active at any given time.
-
-    In this scenario, you might want to consider filtering the raw
-    data before loading it into the store.
 
     @method filter
     @param {Class} type
@@ -1898,6 +1937,18 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
   recordIsLoaded: function(type, id) {
     if (!this.hasRecordForId(type, id)) { return false; }
     return !get(this.recordForId(type, id), 'isEmpty');
+  },
+
+  /**
+    This method returns the metadata for a specific type.
+
+    @method metadataFor
+    @param {string} type
+    @return {object}
+  */
+  metadataFor: function(type) {
+    type = this.modelFor(type);
+    return this.typeMapFor(type).metadata;
   },
 
   // ............
@@ -1969,7 +2020,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
 
     forEach(pending, function(tuple) {
       var record = tuple[0], resolver = tuple[1],
-          adapter = this.adapterForType(record.constructor),
+          adapter = this.adapterFor(record.constructor),
           operation;
 
       if (get(record, 'isNew')) {
@@ -2095,7 +2146,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     @param {DS.Model} type
     @param {Object} data
     @param {Boolean} partial the data should be merged into
-      the existing fata, not replace it.
+      the existing data, not replace it.
   */
   _load: function(type, data, partial) {
     var id = coerceId(data.id),
@@ -2197,6 +2248,8 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     // If passed, it means that the data should be
     // merged into the existing data, not replace it.
 
+    Ember.assert("You must include an `id` in a hash passed to `push`", data.id != null);
+
     var serializer = this.serializerFor(type);
     type = this.modelFor(type);
 
@@ -2208,7 +2261,47 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
     return this.recordForId(type, data.id);
   },
 
+  /**
+    Push some raw data into the store.
+
+    The data will be automatically deserialized using the
+    serializer for the `type` param.
+
+    This method can be used both to push in brand new
+    records, as well as to update existing records.
+
+    You can push in more than one type of object at once.
+    All objects should be in the format expected by the
+    serializer.
+
+    ```js
+    App.ApplicationSerializer = DS.ActiveModelSerializer;
+
+    var pushData = {
+      posts: [
+        {id: 1, post_title: "Great post", comment_ids: [2]}
+      ],
+      comments: [
+        {id: 2, comment_body: "Insightful comment"}
+      ]
+    }
+
+    store.pushPayload('post', pushData);
+    ```
+
+    @method push
+    @param {String} type
+    @param {Object} payload
+  */
+
+  pushPayload: function (type, payload) {
+    var serializer = this.serializerFor(type);
+    serializer.pushPayload(this, payload);
+  },
+
   update: function(type, data) {
+    Ember.assert("You must include an `id` in a hash passed to `update`", data.id != null);
+
     return this.push(type, data, true);
   },
 
@@ -2367,12 +2460,12 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
   /**
     Returns the adapter for a given type.
 
-    @method adapterForType
+    @method adapterFor
     @private
     @param {subclass of DS.Model} type
     @returns DS.Adapter
   */
-  adapterForType: function(type) {
+  adapterFor: function(type) {
     var container = this.container, adapter;
 
     if (container) {
@@ -2404,7 +2497,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
   */
   serializerFor: function(type) {
     type = this.modelFor(type);
-    var adapter = this.adapterForType(type);
+    var adapter = this.adapterFor(type);
 
     return serializerFor(this.container, type.typeKey, adapter && adapter.defaultSerializer);
   }
@@ -3037,7 +3130,8 @@ var RootState = {
     isEmpty: true,
 
     // EVENTS
-    loadingData: function(record) {
+    loadingData: function(record, promise) {
+      record._loadingPromise = promise;
       record.transitionTo('loading');
     },
 
@@ -3051,6 +3145,7 @@ var RootState = {
 
     pushedData: function(record) {
       record.transitionTo('loaded.saved');
+      record.triggerLater('didLoad');
     }
   },
 
@@ -3063,6 +3158,10 @@ var RootState = {
   loading: {
     // FLAGS
     isLoading: true,
+
+    exit: function(record) {
+      record._loadingPromise = null;
+    },
 
     // EVENTS
     pushedData: function(record) {
@@ -3490,8 +3589,8 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
     if (transaction) { fn(transaction); }
   },
 
-  loadingData: function() {
-    this.send('loadingData');
+  loadingData: function(promise) {
+    this.send('loadingData', promise);
   },
 
   loadedData: function() {
@@ -3643,6 +3742,12 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
 
   rollback: function() {
     this._attributes = {};
+
+    if (get(this, 'isError')) {
+      this._inFlightAttributes = {};
+      set(this, 'isError', false);
+    }
+
     this.send('rolledBack');
 
     this.suspendRelationshipObservers(function() {
@@ -4493,8 +4598,9 @@ function asyncBelongsTo(type, options, meta) {
 
     belongsTo = data[key];
 
-    if(!isNone(belongsTo) && get(belongsTo, 'isEmpty')) {
-      return store.fetchRecord(belongsTo);
+    if(!isNone(belongsTo)) {
+      var promise = store.fetchRecord(belongsTo) || Ember.RSVP.resolve(belongsTo);
+      return DS.PromiseObject.create({promise: promise});
     } else {
       return null;
     }
@@ -4535,9 +4641,7 @@ DS.belongsTo = function(type, options) {
 
     if (isNone(belongsTo)) { return null; }
 
-    if (get(belongsTo, 'isEmpty')) {
-      store.fetchRecord(belongsTo);
-    }
+    store.fetchRecord(belongsTo);
 
     return belongsTo;
   }).property('data').meta(meta);
@@ -4561,11 +4665,12 @@ DS.Model.reopen({
   */
   belongsToWillChange: Ember.beforeObserver(function(record, key) {
     if (get(record, 'isLoaded')) {
-      var oldParent = get(record, key),
-          store = get(record, 'store');
+      var oldParent = get(record, key);
 
-      if (oldParent){
-        var change = DS.RelationshipChange.createChange(record, oldParent, store, { key: key, kind: "belongsTo", changeType: "remove" });
+      if (oldParent) {
+        var store = get(record, 'store'),
+            change = DS.RelationshipChange.createChange(record, oldParent, store, { key: key, kind: "belongsTo", changeType: "remove" });
+
         change.sync();
         this._changesToSync[key] = change;
       }
@@ -4582,7 +4687,8 @@ DS.Model.reopen({
   belongsToDidChange: Ember.immediateObserver(function(record, key) {
     if (get(record, 'isLoaded')) {
       var newParent = get(record, key);
-      if(newParent){
+
+      if (newParent) {
         var store = get(record, 'store'),
             change = DS.RelationshipChange.createChange(record, newParent, store, { key: key, kind: "belongsTo", changeType: "add" });
 
@@ -4662,7 +4768,10 @@ function hasRelationship(type, options) {
 }
 
 DS.hasMany = function(type, options) {
-  Ember.assert("The type passed to DS.hasMany must be defined", !!type);
+  if (typeof type === 'object') {
+    options = type;
+    type = undefined;
+  }
   return hasRelationship(type, options);
 };
 
@@ -4996,6 +5105,9 @@ DS.Model.reopenClass({
         meta.key = name;
         type = meta.type;
 
+        if (!type) {
+          type = Ember.String.singularize(name);
+        }
         if (typeof type === 'string') {
           meta.type = this.store.modelFor(type);
         }
@@ -5324,9 +5436,8 @@ DS.RecordArrayManager = Ember.Object.extend({
   @module ember-data
 */
 
-var get = Ember.get, set = Ember.set, merge = Ember.merge;
+var get = Ember.get, set = Ember.set;
 var map = Ember.ArrayPolyfills.map;
-var resolve = Ember.RSVP.resolve;
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
 
@@ -5339,18 +5450,6 @@ DS.InvalidError = function(errors) {
   }
 };
 DS.InvalidError.prototype = Ember.create(Error.prototype);
-
-function isThenable(object) {
-  return object && typeof object.then === 'function';
-}
-
-// Simple dispatcher to support overriding the aliased
-// method in subclasses.
-function aliasMethod(methodName) {
-  return function() {
-    return this[methodName].apply(this, arguments);
-  };
-}
 
 /**
   An adapter is an object that receives requests from a store and
@@ -6162,7 +6261,7 @@ DS.RESTSerializer = DS.JSONSerializer.extend({
         primaryRecord;
 
     for (var prop in payload) {
-      var typeName  = this.modelTypeFromRoot(prop),
+      var typeName  = this.typeForRoot(prop),
           isPrimary = typeName === primaryTypeName;
 
       // legacy support for singular resources
@@ -6300,7 +6399,7 @@ DS.RESTSerializer = DS.JSONSerializer.extend({
         primaryArray;
 
     for (var prop in payload) {
-      var typeName = this.modelTypeFromRoot(prop),
+      var typeName = this.typeForRoot(prop),
           type = store.modelFor(typeName),
           isPrimary = typeName === primaryTypeName;
 
@@ -6320,6 +6419,52 @@ DS.RESTSerializer = DS.JSONSerializer.extend({
   },
 
   /**
+    This method allows you to push a payload containing top-level
+    collections of records organized per type.
+
+    ```js
+    {
+      "posts": [{
+        "id": "1",
+        "title": "Rails is omakase",
+        "author", "1",
+        "comments": [ "1" ]
+      }],
+      "comments": [{
+        "id": "1",
+        "body": "FIRST
+      }],
+      "users": [{
+        "id": "1",
+        "name": "@d2h"
+      }]
+    }
+    ```
+
+    It will first normalize the payload, so you can use this to push
+    in data streaming in from your server structured the same way
+    that fetches and saves are structured.
+
+    @param {DS.Store} store
+    @param {Object} payload
+  */
+  pushPayload: function(store, payload) {
+    payload = this.normalizePayload(null, payload);
+
+    for (var prop in payload) {
+      var typeName = this.typeForRoot(prop),
+          type = store.modelFor(typeName);
+
+      /*jshint loopfunc:true*/
+      var normalizedArray = payload[prop].map(function(hash) {
+        return this.normalize(type, hash, prop);
+      }, this);
+
+      store.pushMany(typeName, normalizedArray);
+    }
+  },
+
+  /**
     You can use this method to normalize the JSON root keys returned
     into the model type expected by your store.
 
@@ -6328,18 +6473,18 @@ DS.RESTSerializer = DS.JSONSerializer.extend({
 
     ```js
     App.ApplicationSerializer = DS.RESTSerializer.extend({
-      modelTypeFromRoot: function(root) {
+      typeForRoot: function(root) {
         var camelized = Ember.String.camelize(root);
         return Ember.String.singularize(camelized);
       }
     });
     ```
 
-    @method modelTypeFromRoot
+    @method typeForRoot
     @param {String} root
     @returns String the model's typeKey
   */
-  modelTypeFromRoot: function(root) {
+  typeForRoot: function(root) {
     return Ember.String.singularize(root);
   },
 
@@ -6491,8 +6636,45 @@ DS.RESTSerializer = DS.JSONSerializer.extend({
     return this._super.apply(this, arguments);
   },
 
+  /**
+    You can use this method to customize the root keys serialized into the JSON.
+    By default the REST Serializer sends camelized root keys.
+    For example, your server may expect underscored root objects.
+
+    ```js
+    App.ApplicationSerializer = DS.RESTSerializer.extend({
+      serializeIntoHash: function(data, type, record, options) {
+        var root = Ember.String.decamelize(type.typeKey);
+        data[root] = this.serialize(record, options);
+      }
+    });
+    ```
+
+    @method serializeIntoHash
+    @param {Object} hash
+    @param {subclass of DS.Model} type
+    @param {DS.Model} record
+    @param {Object} options
+  */
   serializeIntoHash: function(hash, type, record, options) {
     hash[type.typeKey] = this.serialize(record, options);
+  },
+
+  /**
+    You can use this method to customize how polymorphic objects are serialized.
+    By default the JSON Serializer creates the key by appending `_type` to
+    the attribute and value from the model's camelcased model name.
+
+    @method serializePolymorphicType
+    @param {DS.Model} record
+    @param {Object} json
+    @param relationship
+  */
+  serializePolymorphicType: function(record, json, relationship) {
+    var key = relationship.key,
+        belongsTo = get(record, key);
+    key = this.keyForAttribute ? this.keyForAttribute(key) : key;
+    json[key + "Type"] = belongsTo.constructor.typeKey;
   }
 });
 
@@ -6538,7 +6720,7 @@ var forEach = Ember.ArrayPolyfills.forEach;
 
   ### Conventional Names
 
-  Attribute names in your JSON payload should be the underscored versions of
+  Attribute names in your JSON payload should be the camelcased versions of
   the attributes in your Ember.js models.
 
   For example, if you have a `Person` model:
@@ -6556,8 +6738,8 @@ var forEach = Ember.ArrayPolyfills.forEach;
   ```js
   {
     "person": {
-      "first_name": "Barack",
-      "last_name": "Obama",
+      "firstName": "Barack",
+      "lastName": "Obama",
       "occupation": "President"
     }
   }
@@ -7104,6 +7286,64 @@ function loadIrregular(rules, irregularPairs) {
   }
 }
 
+/**
+  Inflector.Ember provides a mechanism for supplying inflection rules for your
+  application. Ember includes a default set of inflection rules, and provides an
+  API for providing additional rules.
+
+  Examples:
+
+  Creating an inflector with no rules.
+
+  ```js
+  var inflector = new Ember.Inflector();
+  ```
+
+  Creating an inflector with the default ember ruleset.
+
+  ```js
+  var inflector = new Ember.Inflector(Ember.Inflector.defaultRules);
+
+  inflector.pluralize('cow') //=> 'kine'
+  inflector.singularize('kine') //=> 'cow'
+  ```
+
+  Creating an inflector and adding rules later.
+
+  ```javascript
+  var inflector = Ember.Inflector.inflector;
+
+  inflector.pluralize('advice') // => 'advices'
+  inflector.uncountable('advice');
+  inflector.pluralize('advice') // => 'advice'
+
+  inflector.pluralize('formula') // => 'formulas'
+  inflector.irregular('formula', 'formulae');
+  inflector.pluralize('formula') // => 'formulae'
+
+  // you would not need to add these as they are the default rules
+  inflector.plural(/$/, 's');
+  inflector.singular(/s$/i, '');
+  ```
+
+  Creating an inflector with a nondefault ruleset.
+
+  ```javascript
+  var rules = {
+    plurals:  [ /$/, 's' ],
+    singular: [ /\s$/, '' ],
+    irregularPairs: [
+      [ 'cow', 'kine' ]
+    ],
+    uncountable: [ 'fish' ]
+  };
+
+  var inflector = new Ember.Inflector(rules);
+  ```
+
+  @class Inflector
+  @namespace Ember
+*/
 function Inflector(ruleSet) {
   ruleSet = ruleSet || {};
   ruleSet.uncountable = ruleSet.uncountable || {};
@@ -7122,15 +7362,66 @@ function Inflector(ruleSet) {
 }
 
 Inflector.prototype = {
+  /**
+    @method plural
+    @param {RegExp} regex
+    @param {String} string
+  */
+  plural: function(regex, string) {
+    this.rules.plurals.push([regex, string]);
+  },
+
+  /**
+    @method singular
+    @param {RegExp} regex
+    @param {String} string
+  */
+  singular: function(regex, string) {
+    this.rules.singular.push([regex, string]);
+  },
+
+  /**
+    @method uncountable
+    @param {String} regex
+  */
+  uncountable: function(string) {
+    loadUncountable(this.rules, [string]);
+  },
+
+  /**
+    @method irregular
+    @param {String} singular
+    @param {String} plural
+  */
+  irregular: function (singular, plural) {
+    loadIrregular(this.rules, [[singular, plural]]);
+  },
+
+  /**
+    @method pluralize
+    @param {String} word
+  */
   pluralize: function(word) {
-    return this.inflect(word, this.rules.plurals);
+    return this.inflect(word, this.rules.plurals, this.rules.irregular);
   },
 
+  /**
+    @method singularize
+    @param {String} word
+  */
   singularize: function(word) {
-    return this.inflect(word, this.rules.singular);
+    return this.inflect(word, this.rules.singular,  this.rules.irregularInverse);
   },
 
-  inflect: function(word, typeRules) {
+  /**
+    @protected
+
+    @method inflect
+    @param {String} word
+    @param {Object} typeRules
+    @param {Object} irregular
+  */
+  inflect: function(word, typeRules, irregular) {
     var inflection, substitution, result, lowercase, isBlank,
     isUncountable, isIrregular, isIrregularInverse, rule;
 
@@ -7148,16 +7439,10 @@ Inflector.prototype = {
       return word;
     }
 
-    isIrregular = this.rules.irregular[lowercase];
+    isIrregular = irregular && irregular[lowercase];
 
     if (isIrregular) {
       return isIrregular;
-    }
-
-    isIrregularInverse = this.rules.irregularInverse[lowercase];
-
-    if (isIrregularInverse) {
-      return isIrregularInverse;
     }
 
     for (var i = typeRules.length, min = 0; i > min; i--) {
@@ -7271,7 +7556,7 @@ Ember.Inflector.defaultRules = {
 
 
 (function() {
-if (Ember.EXTEND_PROTOTYPES) {
+if (Ember.EXTEND_PROTOTYPES === true || Ember.EXTEND_PROTOTYPES.String) {
   /**
     See {{#crossLink "Ember.String/pluralize"}}{{/crossLink}}
 
@@ -7299,6 +7584,248 @@ if (Ember.EXTEND_PROTOTYPES) {
 
 (function() {
 Ember.Inflector.inflector = new Ember.Inflector(Ember.Inflector.defaultRules);
+
+})();
+
+
+
+(function() {
+
+})();
+
+(function() {
+/**
+  @module ember-data
+*/
+
+var get = Ember.get, isNone = Ember.isNone;
+
+DS.ActiveModelSerializer = DS.RESTSerializer.extend({
+  // SERIALIZE
+
+  /**
+    Converts camelcased attributes to underscored when serializing.
+
+    @method keyForAttribute
+    @param {String} attribute
+    @returns String
+  */
+  keyForAttribute: function(attr) {
+    return Ember.String.decamelize(attr);
+  },
+
+  /**
+    Underscores relationship names and appends "_id" or "_ids" when serializing
+    relationship keys.
+
+    @method keyForRelationship
+    @param {String} key
+    @param {String} kind
+    @returns String
+  */
+  keyForRelationship: function(key, kind) {
+    key = Ember.String.decamelize(key);
+    if (kind === "belongsTo") {
+      return key + "_id";
+    } else if (kind === "hasMany") {
+      return Ember.String.singularize(key) + "_ids";
+    } else {
+      return key;
+    }
+  },
+
+  /**
+    Does not serialize hasMany relationships
+  */
+  serializeHasMany: Ember.K,
+
+  /**
+    Underscores the JSON root keys when serializing.
+
+    @method serializeIntoHash
+    @param {Object} hash
+    @param {subclass of DS.Model} type
+    @param {DS.Model} record
+    @param {Object} options
+  */
+  serializeIntoHash: function(data, type, record, options) {
+    var root = Ember.String.decamelize(type.typeKey);
+    data[root] = this.serialize(record, options);
+  },
+
+  /**
+    Serializes a polymorphic type as a fully capitalized model name.
+
+    @method serializePolymorphicType
+    @param {DS.Model} record
+    @param {Object} json
+    @param relationship
+  */
+  serializePolymorphicType: function(record, json, relationship) {
+    var key = relationship.key,
+        belongsTo = get(record, key);
+    key = this.keyForAttribute(key);
+    json[key + "_type"] = Ember.String.capitalize(belongsTo.constructor.typeKey);
+  },
+
+  // EXTRACT
+
+  /**
+    Extracts the model typeKey from underscored root objects.
+
+    @method typeForRoot
+    @param {String} root
+    @returns String the model's typeKey
+  */
+  typeForRoot: function(root) {
+    var camelized = Ember.String.camelize(root);
+    return Ember.String.singularize(camelized);
+  },
+
+  /**
+    Normalize the polymorphic type from the JSON.
+
+    Normalize:
+    ```js
+      {
+        id: "1"
+        minion: { type: "evil_minion", id: "12"}
+      }
+    ```
+
+    To:
+    ```js
+      {
+        id: "1"
+        minion: { type: "evilMinion", id: "12"}
+      }
+    ```
+
+    @method normalizeRelationships
+    @private
+  */
+  normalizeRelationships: function(type, hash) {
+    var payloadKey, payload, key;
+
+    if (this.keyForRelationship) {
+      type.eachRelationship(function(key, relationship) {
+        if (relationship.options.polymorphic) {
+          payloadKey = this.keyForAttribute(key);
+          payload = hash[payloadKey];
+          if (payload && payload.type) {
+            payload.type = this.typeForRoot(payload.type);
+          }
+        } else {
+          payloadKey = this.keyForRelationship(key, relationship.kind);
+          payload = hash[payloadKey];
+        }
+
+        hash[key] = payload;
+
+        if (key !== payloadKey) {
+          delete hash[payloadKey];
+        }
+      }, this);
+    }
+  }
+});
+
+
+})();
+
+
+
+(function() {
+/**
+  @module ember-data
+*/
+
+/**
+  The ActiveModelAdapter is a subclass of the RESTAdapter designed to integrate
+  with a JSON API that uses an underscored naming convention instead of camelcasing.
+  It has been designed to work out of the box with the
+  [active_model_serializers](http://github.com/rails-api/active_model_serializers)
+  Ruby gem.
+
+  ## JSON Structure
+
+  The ActiveModelAdapter expects the JSON returned from your server to follow
+  the REST adapter conventions substituting underscored keys for camelcased ones.
+
+  ### Conventional Names
+
+  Attribute names in your JSON payload should be the underscored versions of
+  the attributes in your Ember.js models.
+
+  For example, if you have a `Person` model:
+
+  ```js
+  App.FamousPerson = DS.Model.extend({
+    firstName: DS.attr('string'),
+    lastName: DS.attr('string'),
+    occupation: DS.attr('string')
+  });
+  ```
+
+  The JSON returned should look like this:
+
+  ```js
+  {
+    "famous_person": {
+      "first_name": "Barack",
+      "last_name": "Obama",
+      "occupation": "President"
+    }
+  }
+  ```
+
+  @class ActiveModelAdapter
+  @constructor
+  @namespace DS
+  @extends DS.Adapter
+**/
+
+DS.ActiveModelAdapter = DS.RESTAdapter.extend({
+  defaultSerializer: '_ams',
+  /**
+    The ActiveModelAdapter overrides the `pathForType` method
+    to build underscored URLs.
+
+    ```js
+      this.pathForType("famousPerson");
+      //=> "famous_people"
+    ```
+
+    @method pathForType
+    @param {String} type
+    @returns String
+  */
+  pathForType: function(type) {
+    var decamelized = Ember.String.decamelize(type);
+    return Ember.String.pluralize(decamelized);
+  }
+});
+})();
+
+
+
+(function() {
+
+})();
+
+
+
+(function() {
+Ember.onLoad('Ember.Application', function(Application) {
+  Application.initializer({
+    name: "activeModelAdapter",
+
+    initialize: function(container, application) {
+      application.register('serializer:_ams', DS.ActiveModelSerializer);
+      application.register('adapter:_ams', DS.ActiveModelAdapter);
+    }
+  });
+});
 
 })();
 

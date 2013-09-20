@@ -4,5 +4,3 @@ RailsDict.UserConnection = DS.Model.extend
   is_connection_accepted: DS.attr('boolean')
   connected_user: DS.attr()
 
-  #relationships
-  post: DS.belongsTo('user')

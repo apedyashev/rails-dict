@@ -1,7 +1,9 @@
 RailsDict.Router.map (match)->
 #  match('/').to('dictionaries')
   @route 'login'
-  @route 'connections'
+  @resource 'connections', ->
+    @route '/'
+    @route 'search'
   @resource 'dictionaries', ->
     @route 'dicts'
     @route 'collaborators'

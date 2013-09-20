@@ -20,7 +20,7 @@
       model.reopen({validations: emberValidations});
   }
   <% ClientSideValidations::Ember.models.each do |rails, ember| %>
-    applyClientSideValidations(<%= ember %>, <%= rails.constantize.new.client_side_validation_hash.to_json %>);
+//    applyClientSideValidations('<%= ember %>', <%= rails.constantize.new.client_side_validation_hash.to_json %>);
   <% end %>
 
 }).call(this);
