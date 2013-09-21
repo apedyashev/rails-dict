@@ -1,3 +1,54 @@
 <div class="panel">
-    Dicts widget
+    <a {{action createNew}}class="button tiny"><i class="icon-book"></i> New</a>
+
+    {{#if isEditMode}}
+    <form>
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Language #1</label>
+                    <input type="text" placeholder="Enter name of lanuage">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Language #2</label>
+                    <input type="text" placeholder="Enter name of lanuage">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="large-12 columns">
+                    <label class="inline">
+                        {{view Ember.Checkbox checkedBinding="editModeIsPublicVisibility" }} Public visibility?
+                    </label>
+                </div>
+            </div>
+
+            {{#if editModeIsPublicVisibility}}
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Please, select collaborators for this dictionary:</label>
+                </div>
+            </div>
+            {{/if}}
+
+    </form>
+    {{else}}
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th>Dictionary</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><i class="icon-book"></i> Rusko-Srpski</td>
+                </tr>
+                <tr>
+                    <td><i class="icon-book"></i> Srpsko-Ruski</td>
+                </tr>
+            </tbody>
+        </table>
+    {{/if}}
 </div>
