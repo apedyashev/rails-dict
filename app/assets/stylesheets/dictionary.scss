@@ -1,5 +1,6 @@
 #dictionary{
   tr{
+    margin-top: 0;
     cursor: pointer;
     .action-icon{
       display: none;
@@ -9,6 +10,14 @@
   tr:hover{
     .action-icon{
       display: block;
+    }
+  }
+
+  tr.edit-mode{
+    .phrase-column{
+      input{
+        margin-top: -36px;
+      }
     }
   }
 }

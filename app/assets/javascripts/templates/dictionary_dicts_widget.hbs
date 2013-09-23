@@ -78,7 +78,7 @@
             <tbody>
             {{#each dict in dictionaries}}
                 <tr>
-                    <td><i class="icon-book"></i> {{dict.language1}} - {{dict.language2}}</td>
+                    <td>{{#linkTo "dictionary.dicts" dict }}<i class="icon-book"></i> {{dict.language1}} - {{dict.language2}}{{/linkTo}}</td>
                 </tr>
             {{else}}
             <tr>

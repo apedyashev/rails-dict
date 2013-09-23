@@ -6,6 +6,9 @@ class ActivityLogger
   ACTION_DELETE_WORD            = 'delwd'
   ACTION_ADD_CONNECTION         = 'addconn'
   ACTION_DELETE_CONNECTION      = 'delconn'
+  ACTION_LOGIN_PAGE_VIEW        = 'lpview'
+  ACTION_LOGIN_SUCCESS          = 'loginsuc'
+  ACTION_LOGIN_FAILURE          = 'loginfail'
 
   #
   # sets user_id (must be called when logger is initialized)
@@ -23,6 +26,10 @@ class ActivityLogger
   # sets x_ip_addr (must be called when logger is initialized)
   def set_x_ip_addr(x_ip_addr)
     @x_ip_addr = x_ip_addr
+  end
+
+  def set_user_agent(user_agent)
+    @user_agent = user_agent
   end
 
 
@@ -72,6 +79,22 @@ class ActivityLogger
     self.log params
   end
 
+  def log_login_page_view(params)
+    params[:action] = ACTION_LOGIN_PAGE_VIEW
+    self.log params
+  end
+
+  def log_login_success(params)
+    params[:action] = ACTION_LOGIN_SUCCESS
+    self.log params
+  end
+
+  def log_login_failure
+    params[:action] = ACTION_LOGIN_FAILURE
+    self.log params
+  end
+
+
   #
   # writes all fields to DB
   def log(params)
@@ -80,6 +103,7 @@ class ActivityLogger
     params[:url]        = ''
 
     params[:user_id]    = @user_id
+    params[:user_agent]    = @user_agent
 
     act_log = ActivityLog.new params
     act_log.save

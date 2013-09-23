@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130923194938) do
+ActiveRecord::Schema.define(:version => 20130923214425) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action",     :limit => 15
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20130923194938) do
     t.datetime "updated_at",                 :null => false
     t.integer  "user_id"
     t.string   "data",       :limit => 5000
+    t.string   "user_agent", :limit => 5000
   end
 
   create_table "authentications", :force => true do |t|
