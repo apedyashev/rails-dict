@@ -1,0 +1,93 @@
+<div class="panel">
+    <a {{action createNew}} {{bind-attr class=":button :tiny isEditMode:disabled"}}><i class="icon-book"></i> New</a>
+
+    {{#if isEditMode}}
+    <form>
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Language #1</label>
+                    {{view Ember.TextField placeholder="E.g.: Russian" valueBinding="lang1" classBinding="lang1Valid::error"}}
+                    {{#if lang1Valid}}
+                    {{else}}
+                    <small class="error">This field is required</small>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Language #2</label>
+                    {{view Ember.TextField placeholder="E.g.: Serbian" valueBinding="lang2" classBinding="lang2Valid::error"}}
+                    {{#if lang2Valid}}
+                    {{else}}
+                    <small class="error">This field is required</small>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="large-12 columns">
+                    <label class="inline">
+                        {{view Ember.Checkbox checkedBinding="editModeIsPublicVisibility" }} Public visibility?
+                    </label>
+                </div>
+            </div>
+
+            {{#if editModeIsPublicVisibility}}
+            <div class="row">
+                <div class="large-12 columns">
+                    <label>Please, select collaborators for this dictionary:</label>
+                    <table class="collaborators-select-list" width="100%">
+                        <tbody>
+                        {{#each entry in connections}}
+                            <tr {{bind-attr class="entry.isSelected:selected"}}>
+                                <td class="avatar"><img  {{bindAttr src="entry.connected_user.avatar" }}/></td>
+                                <td>{{entry.connected_user.name}}</td>
+                                <td>
+                                    {{#if entry.isSelected}}
+                                        <a  {{action addUserToCollaborators entry}}><i class="has-tip icon-check" data-tooltip title="Deselect user!"></i></a>
+                                        {{#if entry.canEdit}}
+                                            <a {{action toggleCanEditProp entry}}><i class="has-tip icon-edit-sign" data-tooltip title="Click to forbid editing of the dictionary by this user"></i></a>
+                                        {{else}}
+                                            <a {{action toggleCanEditProp entry}}><i class="has-tip icon-edit" data-tooltip title="Click to allow editing of the dictionary by this user"></i></a>
+                                        {{/if}}
+                                    {{else}}
+                                    <a {{action addUserToCollaborators entry}}><i class="has-tip icon-check-empty" data-tooltip title="Select user!"></i></a>
+                                    {{/if}}
+                                </td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            {{/if}}
+
+        <a {{action saveDictionary}}class="small success button"><i class="icon-save"></i> Save</a>
+        <a {{action cancelEditMode}}class="small secondary button"><i class="icon-level-up"></i> Cancel</a>
+
+    </form>
+    {{else}}
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th>Dictionary</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{#each dict in dictionaries}}
+                <tr>
+                    <td><i class="icon-book"></i> {{dict.language1}} - {{dict.language2}}</td>
+                </tr>
+            {{else}}
+            <tr>
+                <td>You do not have dictionaries yet.<br /><a {{action createNew}} {{bind-attr class="isEditMode:disabled"}}>Create</a> your firs dictionary</td>
+            </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    {{/if}}
+
+
+</div>

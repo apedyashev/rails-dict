@@ -14,10 +14,18 @@ RailsDict.CustomAdapter = DS.RESTAdapter.extend({
   serializer: RailsDict.serializer
 });
 
+
 RailsDict.Store = DS.Store.extend({
   adapter: 'RailsDict.CustomAdapter'
 });
 
+
+DS.RESTAdapter.reopen
+  pathForType: (type)->
+    if type is 'dictionary'
+      return 'dicts'
+    else
+      return Ember.String.pluralize(type)
 
 
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130921101518) do
+ActiveRecord::Schema.define(:version => 20130923194938) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action",     :limit => 15
@@ -45,16 +45,17 @@ ActiveRecord::Schema.define(:version => 20130921101518) do
   create_table "collaborators", :force => true do |t|
     t.integer  "dictionary_id"
     t.integer  "user_id"
-    t.boolean  "is_read_only",  :default => true
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.boolean  "can_edit",      :default => false
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
   end
 
   create_table "dict_entries", :force => true do |t|
     t.string   "phrase"
     t.text     "translation"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+    t.integer  "dictionary_id"
   end
 
   create_table "dictionaries", :force => true do |t|
@@ -63,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20130921101518) do
     t.boolean  "is_public",  :default => false
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
+    t.integer  "user_id"
   end
 
   create_table "user_connections", :force => true do |t|

@@ -4,7 +4,7 @@ class DictEntriesController < Base::LoggedUserController
   # GET /dict_entries
   def index
     #render json: DictEntry.all
-    respond_with DictEntry.all
+    respond_with DictEntry.where(:dictionary_id => params[:dictionary_id])
   end
 
   # GET /dict_entries/:id

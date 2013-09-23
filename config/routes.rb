@@ -1,6 +1,8 @@
 RailsDict::Application.routes.draw do
   resources :user_connections
   resources :users
+  resources :dicts
+  resources :collaborators
 
 
   #resources :connections

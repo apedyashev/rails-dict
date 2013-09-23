@@ -12,3 +12,26 @@
     }
   }
 }
+
+table.collaborators-select-list{
+  border-collapse:collapse;
+
+  tr{
+    td{
+      padding: 1px;
+    }
+
+    td.avatar{
+      //padding-left: 1px;
+      img{
+        width: 33px;
+      }
+    }
+  }
+  tr.selected{
+    background-color: #457A1A;
+    td{
+
+    }
+  }
+}

@@ -1,55 +1,23 @@
-<div class="small-2 large-4 columns">
-    <div class="button-bar">
-        <ul class="button-group">
-            <li>{{#linkTo "dictionaries.dicts" classNameBindings=":button :small" activeClass="disabled"}}Dictionaries{{/linkTo}}</li>
-            <li>{{#linkTo "dictionaries.collaborators" classNameBindings=":button :small" activeClass="disabled"}}Collaborators{{/linkTo}}</li>
-        </ul>
-    </div>
 
-    {{outlet dictwidgets}}
-</div>
-
-
-<div class="small-6 large-8 columns">
+<div class="small-12 large-12 columns">
     <table id="dictionary" width="100%">
         <thead>
             <tr>
                 <th>#</th>
-                <th>Russian</th>
-                <th>Serbian</th>
+                <th>Owner</th>
+                <th>Dictionary</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td><a {{action save}}class="button mini"><span class="gicon-plus gicon-white"></span></a></td>
-                <td>{{view Ember.TextField placeholder="Phrase" valueBinding="phrase" classBinding="phraseValid::error"}}</td>
-                <td>{{view Ember.TextField placeholder="Translation" valueBinding="translation" classBinding="translationValid::error"}}</td>
-            </tr>
-            {{#each entry in words}}
+            {{#each entry in dictionaries}}
             <tr>
                 <td>{{entry.id}}</td>
                 <td>
-                    {{#if entry.isEditMode}}
-                    {{view Ember.TextField placeholder="Phrase" valueBinding="entry.phrase" classBinding="entry.isPhraseValid::error"}}
-                    {{else}}
-                        {{entry.phrase}}
-                    {{/if}}
+                    <img  {{bindAttr src="entry.user.avatar" }}/>
+                    {{entry.user.name}}
                 </td>
                 <td>
-                    {{#if entry.isEditMode}}
-                        {{view Ember.TextField placeholder="Translation" valueBinding="entry.translation" classBinding="entry.isTranslationValid::error"}}
-                    {{else}}
-                        {{entry.translation}}
-                    {{/if}}
-                    {{#if entry.isEditMode}}
-                        <span class="pull-right">
-                        <span class="label button mini" {{action "save" entry}} ><span class="gicon-ok-sign gicon-white"></span></span>
-                        <span class="label button mini alert" {{action "cancelEditMode" entry}} ><span class="gicon-remove-sign gicon-white"></span></span>
-                        </span>
-                    {{else}}
-                        <span  {{action "remove" entry}} class="gicon-minus-sign pull-right action-icon" title="Delete entry"></span>
-                        <span  {{action "edit" entry}} class="gicon-edit pull-right action-icon" title="Edit entry"></span>
-                    {{/if}}
+                    {{#linkTo "dictionary.collaborators" entry }}{{entry.language1}} - {{entry.language2}}{{/linkTo}}
                 </td>
             </tr>
             {{/each}}

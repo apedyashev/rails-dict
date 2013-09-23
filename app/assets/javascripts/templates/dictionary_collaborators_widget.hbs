@@ -1,0 +1,20 @@
+<div class="panel">
+    You share this dictionary with these people:
+    <table class="collaborators-select-list" width="100%">
+        <tbody>
+        {{#each collaborator in collaborators}}
+        <tr >
+            <td class="avatar"><img  {{bindAttr src="collaborator.user.avatar" }}/></td>
+            <td>{{collaborator.user.name}}</td>
+            <td>
+                {{#if collaborator.can_edit}}
+                <i class="has-tip icon-edit-sign" data-tooltip title="This user can edit this dictionary"></i>
+                {{else}}
+                <i class="has-tip icon-edit"  data-tooltip title="This user can edit this dictionary"></i>
+                {{/if}}
+            </td>
+        </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>

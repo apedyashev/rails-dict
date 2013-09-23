@@ -1,6 +1,9 @@
 class User < ActiveRecord::Base
   attr_accessible :email, :name, :avatar, :first_name, :last_name, :username, :gender
 
+  has_many :collaborators
+  has_many :dictionary
+
   has_many :authorizations
   has_many :user_connections
   has_many :connected_users, :through => :user_connections, :conditions => {:user_connections => {:is_connection_accepted => true}}
