@@ -20,16 +20,18 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 
   gem 'zurb-foundation', '~> 4.0.0'
-  gem 'ember-rails'
-  gem 'ember-source', '~> 1.0.0.rc8'
-  gem "handlebars-source", "~> 1.0.12"
-  gem 'client_side_validations'
-  gem 'client_side_validations-ember'
-
-  gem "font-awesome-rails"
-
 
 end
+
+
+
+gem "font-awesome-rails"
+
+gem 'ember-rails'
+gem 'ember-source', '~> 1.0.0.rc8'
+gem "handlebars-source", "~> 1.0.12"
+gem 'client_side_validations'
+gem 'client_side_validations-ember'
 
 gem 'active_model_serializers', github: 'rails-api/active_model_serializers'
 gem 'json', '~> 1.7.7'

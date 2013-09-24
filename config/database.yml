@@ -35,7 +35,7 @@ production:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: rails-dict_production
+  database: rails_dict
   pool: 5
   username: root
   password: ljhjuf

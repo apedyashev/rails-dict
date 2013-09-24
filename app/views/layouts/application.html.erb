@@ -18,8 +18,7 @@
     <meta property="og:description" content="My first experience with RoR + Ember.JS. Designed to help you in learning new languages!" />
     <meta property="og:image" content="http://www.simpsoncrazy.com/content/lists/dictionary-page.png" />
 
-  	<title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
-
+    <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
 
     <%= include_gon %>
   	<%= stylesheet_link_tag    "application" %>
@@ -29,16 +28,15 @@
 
   <body>
 
-  <% if @is_logged_in %>
-    <%= javascript_include_tag "application" %>
-  <% else %>
+      <% if @is_logged_in %>
+          <%= javascript_include_tag "application" %>
+      <% else %>
 
-  <% end %>
+      <% end %>
 
-  <%= yield %>
+      <%= yield %>
 
-
-
-
+    
   </body>
 </html>
+
